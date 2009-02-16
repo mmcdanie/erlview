@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module erlview</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module erlview</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>erlview, an Erlang View Server for CouchDB.
+
+<p><b>Behaviours:</b> <a href="gen_server.html"><tt>gen_server</tt></a>.</p>
+<p><b>Authors:</b> : (originally) Michael McDaniel [<em>web site:</em> <tt><a href="http://autosys.us" target="_top">http://autosys.us</a></tt>].</p>
+<p><b>References</b><ul><li> used with CouchDB <a href="http://couchdb.apache.org" target="_top"><tt>http://couchdb.apache.org</tt></a></li><li><p> Now at <a href="http://github.com/mmcdanie/erlview/tree/master">http://github.com.</a></p>
+ 
+ 
+ 
+ </li></ul></p>
+
+<h2><a name="description">Description</a></h2><p>erlview, an Erlang View Server for CouchDB</p>
+
+ <p>Copyright 2009 Michael McDaniel <a href="http://autosys.us" target="_top"><tt>http://autosys.us</tt></a></p>
+
+ <p>Licensed under the Apache License, Version 2.0 (the "License"); 
+you may not use this file except in compliance with the License.</p>
+
+ <p>You may obtain a copy of the License at 
+http://www.apache.org/licenses/LICENSE-2.0</p>
+
+ <p>Unless required by applicable law or agreed to in writing, 
+software distributed under the License is distributed on an 
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+either express or implied.</p>
+
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-fields">fields()</a></h3>
+<p><b>abstract datatype</b>: <tt>fields()</tt></p>
+<p>List of field names where field::binary() describes a document field name.
+ </p>
+
+<h3 class="typedecl"><a name="type-key_pairs">key_pairs()</a></h3>
+<p><b>abstract datatype</b>: <tt>key_pairs()</tt></p>
+<p>List of {field, content} where field::binary() and content::binary() describe document field names or field contents.
+ </p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#entire_doc-2">entire_doc/2</a></td><td> 
+Used in map funs, finds documents containing requested field, returns entire doc.</td></tr>
+<tr><td valign="top"><a href="#find_all_content-2">find_all_content/2</a></td><td>  
+Used in map funs, finds documents having all of the requested content.</td></tr>
+<tr><td valign="top"><a href="#find_all_fields-2">find_all_fields/2</a></td><td>  
+Used in map funs, finds documents containing all requested fields.</td></tr>
+<tr><td valign="top"><a href="#find_any_content-2">find_any_content/2</a></td><td>  
+Used in map funs, finds documents having any of the requested content, NOT IMPLEMENTED.</td></tr>
+<tr><td valign="top"><a href="#find_any_fields-2">find_any_fields/2</a></td><td>  
+Used in map funs, finds documents having any of the requested fields, NOT IMPLEMENTED.</td></tr>
+<tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="code_change-3">code_change/3</a></h3>
+<div class="spec">
+<p><tt>code_change(OldVsn, State, Extra) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="entire_doc-2">entire_doc/2</a></h3>
+<div class="spec">
+<p><tt>entire_doc(Doc::<a href="#type-doc">doc()</a>, X2::{Key::<a href="#type-key">key()</a>, all}) -&gt; <a href="#type-doc">doc()</a></tt></p>
+</div><p><p> 
+Used in map funs, finds documents containing requested field, returns entire doc.</p>
+
+ <p>used thusly from map funs ...</p>
+
+ <p>fun(Doc) -&gt; erlview:entire_doc( Doc, { &lt;&lt;"who"&gt;&gt;, all } ) end.</p>
+
+ If Key is found in Doc, returns entire doc.
+</p>
+
+<h3 class="function"><a name="find_all_content-2">find_all_content/2</a></h3>
+<div class="spec">
+<p><tt>find_all_content(Doc::<a href="#type-doc">doc()</a>, X2::{Key_pairs::<a href="#type-key_pairs">key_pairs()</a>, Out_fields::<a href="#type-fields">fields()</a>}) -&gt; <a href="#type-doc">doc()</a></tt></p>
+</div><p><p>  
+Used in map funs, finds documents having all of the requested content.</p>
+ 
+  <p>The following map fun would return all documents which contain "pooh" in the  
+"who" field and "carrots" in the "what" field, but would only return document  
+fields "who", "when", and "what" from those documents.  Returns first Key  
+content as 'Key' (i.e. what you'll see in Futon's 'Key' column on left)</p>
+ 
+ <pre>
+  fun(Doc) -&gt;
+     erlview:find_all_content( Doc,
+                          { [{&lt;&lt;"who"&gt;&gt;,
+                              &lt;&lt;"pooh"&gt;&gt;},
+                             {&lt;&lt;"what"&gt;&gt;
+                              &lt;&lt;"carrots"&gt;&gt;],
+                            [ &lt;&lt;"myid"&gt;&gt;,
+                              &lt;&lt;"who"&gt;&gt;,
+                              &lt;&lt;"when"&gt;&gt; ]
+                           } )
+  end.
+ </pre>
+ 
+ </p>
+
+<h3 class="function"><a name="find_all_fields-2">find_all_fields/2</a></h3>
+<div class="spec">
+<p><tt>find_all_fields(Doc::<a href="#type-doc">doc()</a>, X2::{[Keys::<a href="#type-fields">fields()</a>], [Out_fields::<a href="#type-fields">fields()</a>]}) -&gt; <a href="#type-doc">doc()</a></tt></p>
+</div><p><p>  
+Used in map funs, finds documents containing all requested fields.</p>
+ 
+ <pre>
+  fun(Doc) -&gt;
+      erlview:find_all_fields( Doc, { [&lt;&lt;"who"&gt;&gt;,
+                                         &lt;&lt;"what"&gt;&gt;],
+                                        [&lt;&lt;"who"&gt;&gt;,
+                                         &lt;&lt;"what"&gt;&gt;,
+                                         &lt;&lt;"when"&gt;&gt;] } )
+  end.
+ </pre>
+ 
+  If all Keys are found in Doc, returns Out_fields.  Returns first Key
+  'Key' (i.e. what you'll see in Futon's 'Key' column on left)
+ </p>
+
+<h3 class="function"><a name="find_any_content-2">find_any_content/2</a></h3>
+<div class="spec">
+<p><tt>find_any_content(Doc, X2) -&gt; any()</tt></p>
+</div><p><p>  
+Used in map funs, finds documents having any of the requested content, NOT IMPLEMENTED</p>
+ 
+  <p>returns docs containing a foo of "new", and myid of "123"
+  and returns fields myid,who,when
+  fun(Doc) -&gt; erlview:find_any_content(Doc,
+                           {[ {&lt;&lt;"foo"&gt;&gt;, &lt;&lt;"new"&gt;&gt;},
+                              {&lt;&lt;"myid"&gt;&gt;, &lt;"123"&gt;&gt;} ]
+                            [ &lt;&lt;"myid"&gt;&gt;,
+                              &lt;&lt;"who"&gt;&gt;,
+                              &lt;&lt;"when"&gt;&gt; ]                           
+} )  
+end.</p>
+ 
+ 
+  find_any_content( Doc::doc(), { Key_pairs::key_pairs() ,
+                             Out_fields::fields() } ) -&gt; doc()</p>
+
+<h3 class="function"><a name="find_any_fields-2">find_any_fields/2</a></h3>
+<div class="spec">
+<p><tt>find_any_fields(Doc::<a href="#type-doc">doc()</a>, X2::{Keys::<a href="#type-fields">fields()</a>, [Out_fields::<a href="#type-fields">fields()</a>]}) -&gt; <a href="#type-doc">doc()</a></tt></p>
+</div><p><p>  
+Used in map funs, finds documents having any of the requested fields, NOT IMPLEMENTED</p>
+ 
+  <p>fun(Doc) -&gt; erlview:find_any_fields( Doc, { &lt;&lt;"who"&gt;&gt;,
+                                        [&lt;&lt;"who"&gt;&gt;,
+                                         &lt;&lt;"what"&gt;&gt;,
+                                         &lt;&lt;"when"&gt;&gt;] } )  
+end.</p>
+ 
+  If any Keys are found in Doc, returns fields requested via Out_fields argument.
+ </p>
+
+<h3 class="function"><a name="handle_call-3">handle_call/3</a></h3>
+<div class="spec">
+<p><tt>handle_call(X1, From, State) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="handle_cast-2">handle_cast/2</a></h3>
+<div class="spec">
+<p><tt>handle_cast(Msg, State) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="handle_info-2">handle_info/2</a></h3>
+<div class="spec">
+<p><tt>handle_info(Info, State) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="init-1">init/1</a></h3>
+<div class="spec">
+<p><tt>init(X1) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="start_link-0">start_link/0</a></h3>
+<div class="spec">
+<p><tt>start_link() -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="terminate-2">terminate/2</a></h3>
+<div class="spec">
+<p><tt>terminate(Reason, State) -&gt; any()</tt></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Feb 16 2009, 08:18:09.</i></p>
+</body>
+</html>

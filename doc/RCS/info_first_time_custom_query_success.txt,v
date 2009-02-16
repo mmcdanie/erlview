@@ -1,0 +1,148 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2009.02.16.04.04.20;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@
+ It works the *first* time if I choose from Futon Custom view,
+ dropdown erlang, and local.ini has 'erlang = /dev/null' in [query_servers].
+ Actually, if I keep pressing 'Run' it works again and again.
+ But if I choose the exact same code
+ fun(Docs) -> lists:keysearch(<<"when">>, 1, Docs) end.
+ which was saved then I get function_clause error (and, it shouldn't matter
+ at all what the code is because the return from erlview map_docs is
+ hard-coded).
+{function_clause,
+    [{couch_view_updater,view_insert_doc_query_results,
+         [{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+              [<<"1998958978">>],
+              {[{<<"who">>,<<"fuzzy bear">>},
+                {<<"what">>,<<"a new test">>},
+                {<<"when">>,<<"2009/01/17 23:30">>},
+                {<<"note">>,<<"yadda yadda, SNL is on">>}]},
+              [],false,[]},
+          [],
+          [{{view,1,
+                [<<"what">>],
+                <<"fun(Docs) -> lists:keysearch(<<\"what\">>, 1, Docs) end.">>,
+                {btree,<0.73.0>,nil,#Fun<couch_btree.3.23070627>,
+                    #Fun<couch_btree.4.117278773>,
+                    #Fun<couch_view.less_json_keys.2>,
+                    #Fun<couch_view_group.7.3084131>},
+                []},
+            []},
+  ...
+
+
+(cd /tmp && couchdb -i)
+
+1> [debug] [<0.65.0>] 'POST' /test/_slow_view?limit=10&group=true {1,1}
+Headers: [{'Accept',"application/json, text/javascript, */*"},
+          {'Accept-Charset',"ISO-8859-1,utf-8;q=0.7,*;q=0.7"},
+          {'Accept-Encoding',"gzip,deflate"},
+          {'Accept-Language',"en-us,en;q=0.5"},
+          {'Cache-Control',"no-cache"},
+          {'Connection',"keep-alive"},
+          {'Content-Length',"86"},
+          {'Content-Type',"application/json; charset=UTF-8"},
+          {'Host',"127.0.0.1:5984"},
+          {'Keep-Alive',"300"},
+          {'Pragma',"no-cache"},
+          {'Referer',"http://127.0.0.1:5984/_utils/database.html?test/_slow_view"},
+          {'User-Agent',"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.5) Gecko/2008121621 Ubuntu/8.04 (hardy) Firefox/3.0.5"},
+          {"X-Requested-With","XMLHttpRequest"}]
+[debug] [<0.59.0>] Spawning new temp update process for db test.
+[debug] [<0.65.0>] request_group {Pid, Seq} {<0.93.0>,46}
+
+
+=INFO REPORT==== 27-Jan-2009::12:10:46 ===
+    current_function: {couch_query_servers,start_doc_map,2}
+    <<"erlang">>: [<<"fun(Docs) -> lists:keysearch(<<\"when\">>, 1, Docs) end.">>]
+[debug] [<0.94.0>] couch_query_servers:start_doc_map(<<"erlang">>, [<<"fun(Docs) -> lists:keysearch(<<\"when\">>, 1, Docs) end.">>])
+
+=> erlview, FunListTup: []
+
+=INFO REPORT==== 27-Jan-2009::12:10:46 ===
+    current_function: {couch_query_servers,map_docs,2}
+    {<<"erlang">>,<0.0.0>}: [{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+                                  [<<"1998958978">>],
+                                  {[{<<"who">>,<<"fuzzy bear">>},
+                                    {<<"what">>,<<"a new test">>},
+                                    {<<"when">>,<<"2009/01/17 23:30">>},
+                                    {<<"note">>,
+                                     <<"yadda yadda, SNL is on">>}]},
+                                  [],false,[]},
+                             {doc,<<"63e0ea326c4321bff2608141e201c960">>,
+                                  [<<"3446932169">>],
+                                  {[{<<"myid">>,
+                                     <<"16522816470249139751422478824221512424025424784991883">>},
+                                    {<<"who">>,<<"pooh">>},
+                                    {<<"what">>,<<"apples">>},
+                                    {<<"when">>,<<"2009/01/18 02:02">>},
+                                    {<<"note">>,<<"yum, apples!">>}]},
+                                  [],false,[]},
+                             {doc,<<"9ec29aaccd31046d60bc4280c2af6394">>,
+                                  [<<"3984935616">>],
+                                  {[{<<"myid">>,
+                                     24354865410746211165167122214821582281671811395},
+                                    {<<"who">>,<<"pooh">>},
+                                    {<<"what">>,<<"carrots">>},
+                                    {<<"when">>,<<"2009/01/18 01:57">>},
+                                    {<<"note">>,<<"ya ya ya">>}]},
+                                  [],false,[]}]
+
+=INFO REPORT==== 27-Jan-2009::12:10:46 ===
+    current_function: {erlview,handle_call,1}
+    map_docs: [{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+                    [<<"1998958978">>],
+                    {[{<<"who">>,<<"fuzzy bear">>},
+                      {<<"what">>,<<"a new test">>},
+                      {<<"when">>,<<"2009/01/17 23:30">>},
+                      {<<"note">>,<<"yadda yadda, SNL is on">>}]},
+                    [],false,[]},
+               {doc,<<"63e0ea326c4321bff2608141e201c960">>,
+                    [<<"3446932169">>],
+                    {[{<<"myid">>,
+                       <<"16522816470249139751422478824221512424025424784991883">>},
+                      {<<"who">>,<<"pooh">>},
+                      {<<"what">>,<<"apples">>},
+                      {<<"when">>,<<"2009/01/18 02:02">>},
+                      {<<"note">>,<<"yum, apples!">>}]},
+                    [],false,[]},
+               {doc,<<"9ec29aaccd31046d60bc4280c2af6394">>,
+                    [<<"3984935616">>],
+                    {[{<<"myid">>,
+                       24354865410746211165167122214821582281671811395},
+                      {<<"who">>,<<"pooh">>},
+                      {<<"what">>,<<"carrots">>},
+                      {<<"when">>,<<"2009/01/18 01:57">>},
+                      {<<"note">>,<<"ya ya ya">>}]},
+                    [],false,[]}]
+
+=INFO REPORT==== 27-Jan-2009::12:10:46 ===
+    current_function: {couch_query_servers,handle_call,3}
+    {{ret_proc,<<"erlang">>,<0.0.0>},
+     {<0.94.0>,#Ref<0.0.0.512>},
+     {24602,28699,32796,36893}}
+[info] [<0.65.0>] 127.0.0.1 - - 'POST' /test/_slow_view?limit=10&group=true 200
+
+
+%% end
+@

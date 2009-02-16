@@ -1,0 +1,77 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2009.02.16.04.04.20;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@=INFO REPORT==== 27-Jan-2009::09:17:34 ===
+    current_function: {couch_query_servers,start_doc_map,2}
+    <<"javascript">>: [<<"function(doc) {\n  emit(null, doc);\n}">>]
+[debug] [<0.101.0>] couch_query_servers:start_doc_map(<<"javascript">>, [<<"function(doc) {\n  emit(null, doc);\n}">>])
+
+
+=INFO REPORT==== 27-Jan-2009::09:17:34 ===
+    current_function: {couch_query_servers,get_os_process,1}
+    {<<"javascript">>}
+
+=INFO REPORT==== 27-Jan-2009::09:17:34 ===
+    current_function: {couch_query_servers,handle_call,3}
+    {{get_proc,<<"javascript">>},
+     {<0.101.0>,#Ref<0.0.0.657>},
+     {24602,28699,32796,36893}}
+
+=INFO REPORT==== 27-Jan-2009::09:17:34 ===
+    current_function: {couch_query_servers,map_docs,2}
+    {<<"javascript">>,<0.102.0>}: [{doc,
+                                       <<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+                                       [<<"1998958978">>],
+                                       {[{<<"who">>,<<"fuzzy bear">>},
+                                         {<<"what">>,<<"a new test">>},
+                                         {<<"when">>,<<"2009/01/17 23:30">>},
+                                         {<<"note">>,
+                                          <<"yadda yadda, SNL is on">>}]},
+                                       [],false,[]},
+                                   {doc,
+                                       <<"63e0ea326c4321bff2608141e201c960">>,
+                                       [<<"3446932169">>],
+                                       {[{<<"myid">>,
+                                          <<"16522816470249139751422478824221512424025424784991883">>}, 
+                                         {<<"who">>,<<"pooh">>},
+                                         {<<"what">>,<<"apples">>},
+                                         {<<"when">>,<<"2009/01/18 02:02">>},
+                                         {<<"note">>,<<"yum, apples!">>}]},
+                                       [],false,[]},
+                                   {doc,
+                                       <<"9ec29aaccd31046d60bc4280c2af6394">>,
+                                       [<<"3984935616">>],
+                                       {[{<<"myid">>,
+                                          24354865410746211165167122214821582281671811395},
+                                         {<<"who">>,<<"pooh">>},
+                                         {<<"what">>,<<"carrots">>},
+                                         {<<"when">>,<<"2009/01/18 01:57">>},
+                                         {<<"note">>,<<"ya ya ya">>}]},
+                                       [],false,[]}]
+
+=INFO REPORT==== 27-Jan-2009::09:17:34 ===
+    current_function: {couch_query_servers,handle_call,3}
+    {{ret_proc,<<"javascript">>,<0.102.0>},
+     {<0.101.0>,#Ref<0.0.0.673>},
+     {24602,28699,32796,36893}}
+[info] [<0.65.0>] 127.0.0.1 - - 'POST' /test/_slow_view?limit=10&group=true 200
+@
