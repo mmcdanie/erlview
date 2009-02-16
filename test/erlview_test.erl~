@@ -1,0 +1,109 @@
+%%%-------------------------------------------------------------------
+%%% File    : erlview_test.erl
+%%% Author  : mmcdanie <>
+%%% Description : intended to be -include("erlview_test.erl") by
+%%%               erlview.erl
+%%%
+%%% Currently needs to be run from within an interactive couchdb 
+%%% session.  And session needs restarting after the tests because
+%%% at the moment test funs are inserted into ets table but not
+%%% removed.
+%%%
+%%% Created : 31 Jan 2009 by mmcdanie <>
+%%%-------------------------------------------------------------------
+
+
+
+-ifdef(test).
+
+-include_lib("eunit/include/eunit.hrl").
+
+-include("erlview.hrl").
+
+
+% this must run before *_fun tests which depend on ets table being available
+ init_test() ->
+    case lists:member( couch_server, registered() ) of
+	true  -> dont_run_init_again ;
+
+	false -> exit(run_tests_from_interactive_couchdb)
+    end
+ .
+
+prompt_test() -> 
+    Data = [1,2,3] ,
+    ?assert( {reply,
+	      #response.true,
+	      #state{}} == handle_call({prompt, Data}, self(), #state{}) )
+.
+
+reset_test() -> 
+    Data = [1,2,3] ,
+    ?assert( {reply, 
+	      #response.true ,
+	      #state{}} == handle_call({reset, Data}, self(), #state{}) )
+.
+
+% 
+% expand this to enter funs from command line
+% also check that fun was inserted into ets table, and then remove it
+% from the table
+add_fun_test() -> 
+    Good_fun = [<<"fun(Doc) -> x end.">>] ,
+
+    Bad_fun  = [<<"fun(Doc) -> x end ">>] ,   % missing end dot
+    Bad_fun2 = [<<"function(doc) { emit(null, doc); }">>] , % javascript
+
+    ?assert( #response.good_eval == gen_server:call(erlview, {add_fun, Good_fun}))
+
+    , ?assert( {ok, fun_parsed} /= gen_server:call(erlview, {add_fun, Bad_fun}))
+    , ?assert( {ok, fun_parsed} /= gen_server:call(erlview, {add_fun, Bad_fun2}))
+
+    , ?assert( {error, fun_didnt_eval_try_another_fun} ==
+	       gen_server:call(erlview, {add_fun, Bad_fun}))
+    , ?assert( {error, fun_didnt_eval_try_another_fun} ==
+	       gen_server:call(erlview, {add_fun, Bad_fun2}))
+
+.
+
+
+% expand this to enter docs from command line or read a file
+map_docs_test() -> 
+Docs = 
+[{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+                                   [<<"1998958978">>],
+                                   {[{<<"who">>,<<"fuzzy bear">>},
+                                     {<<"what">>,<<"a new test">>},
+                                     {<<"when">>,<<"2009/01/17 23:30">>},
+                                     {<<"note">>,
+                                      <<"yadda yadda, SNL is on">>}]},
+                                   [],false,[]},
+                              {doc,<<"63e0ea326c4321bff2608141e201c960">>,
+                                   [<<"3446932169">>],
+                                   {[{<<"myid">>,
+                                      <<"16522816470249139751422478824221512424025424784991883">>},
+                                     {<<"who">>,<<"pooh">>},
+                                     {<<"what">>,<<"apples">>},
+                                     {<<"when">>,<<"2009/01/18 02:02">>},
+                                     {<<"note">>,<<"yum, apples!">>}]},
+                                   [],false,[]},
+                              {doc,<<"9ec29aaccd31046d60bc4280c2af6394">>,
+                                   [<<"3984935616">>],
+                                   {[{<<"myid">>,
+                                      24354865410746211165167122214821582281671811395},
+                                     {<<"who">>,<<"pooh">>},
+                                     {<<"what">>,<<"carrots">>},
+                                     {<<"when">>,<<"2009/01/18 01:57">>},
+                                     {<<"note">>,<<"ya ya ya">>}]},
+                                   [],false,[]}] ,
+
+    Response = gen_server:call(erlview, {map_docs, Docs}) ,
+    ?assert( is_list( Response ) )
+.
+
+
+                    
+
+-else.
+-endif.
+%% end $Id$

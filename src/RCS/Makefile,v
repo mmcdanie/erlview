@@ -1,0 +1,66 @@
+head	1.2;
+access;
+symbols
+	r024:1.2;
+locks
+	mmcdanie:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2009.02.13.21.00.30;	author mmcdanie;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.02.13.20.30.22;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@
+#
+# see also Emakefile
+#
+
+SRC = erlview
+BEAM = 
+
+E_SRC=$(foreach file, $(SRC), ./$(file).erl)
+E_BEAM=$(foreach file, $(SRC), ../ebin/$(file).beam)
+
+ERLMAKE=/usr/local/bin/erl -make
+ERLEVAL=/usr/local/bin/erl -eval
+MAKE=/usr/bin/make
+
+
+
+
+all : $(E_SRC)
+	$(ERLMAKE)
+	$(MAKE) doc
+
+
+doc : $(E_SRC)
+	$(ERLEVAL) 'edoc:run([],[erlview.erl], [{new,true},{source_path, [".", "../../couchdb/src/couchdb"]}, {dir, "../doc"}]) , init:stop().'
+#% end@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d19 1
+a19 1
+all : $(E_BEAM)
+@

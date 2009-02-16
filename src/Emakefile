@@ -1,0 +1,27 @@
+%%
+%% to make from command line do following
+%%    erl -make
+%%
+%% run tests from interactive couchdb shell, couchdb -i
+%% 1> eunit:test(erlview, [verbose]).
+%%     ...
+%%  All 10 tests successful.
+%% 2> q().
+%
+
+{'*', [
+	{outdir, "../ebin"}
+       ,{i, "../include"}
+       ,{i, "../../couchdb/src/couchdb"}
+       ,{i, "../test"}
+       ,debug_info
+       ,strict_record_tests
+       ,netload
+
+%       , {d,debug}      %% uncomment for debug
+       , {d,test}	%% uncomment for dev/test ; 
+			%% remember to touch ../tests/* before remaking
+      ]	
+}.
+
+%% end $Id: Emakefile,v 1.3 2009/02/16 04:05:37 mmcdanie Exp mmcdanie $

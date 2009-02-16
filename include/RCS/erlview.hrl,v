@@ -1,0 +1,133 @@
+head	1.5;
+access;
+symbols
+	r024:1.5
+	r005:1.4
+	r003:1.3
+	nr002:1.3
+	nr001:1.2;
+locks
+	mmcdanie:1.5; strict;
+comment	@# @;
+
+
+1.5
+date	2009.02.16.04.01.54;	author mmcdanie;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.02.09.02.28.18;	author mmcdanie;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.02.06.16.42.19;	author mmcdanie;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.02.06.15.12.33;	author mmcdanie;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.02.01.19.36.31;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@
+-ifndef(STATE).
+-define(STATE, 1).
+
+
+-record(state, {fun_was="everywhere"}).
+
+-record(response, 
+	{
+	  true = "true\"\n"
+	  , success  = true
+	  , failure  = {error, unknown}
+	  , fun_insert = {ok, fun_inserted}
+%
+	  , bad_eval   = {error, fun_didnt_eval_try_another_fun}
+	  , fun_exists = {error, fun_exists}
+	  , ets_fail   = {error, ets_failure}
+	 }
+       ).
+
+-else.
+-endif.
+
+%% end $Id: erlview.hrl,v 1.4 2009/02/09 02:28:18 mmcdanie Exp mmcdanie $
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d6 1
+a6 1
+-record(state, {st="Oregon"}).
+d21 1
+a21 1
+
+d24 1
+a24 1
+%% end $Id: erlview.hrl,v 1.3 2009/02/06 16:42:19 mmcdanie Exp mmcdanie $
+@
+
+
+1.3
+log
+@passes all 5 tests
+@
+text
+@d6 1
+a6 1
+-record(state, {}).
+d24 1
+a24 1
+%% end $Id: erlview.hrl,v 1.2 2009/02/06 15:12:33 mmcdanie Exp mmcdanie $
+@
+
+
+1.2
+log
+@checkpoint
+@
+text
+@d12 1
+a12 1
+	  , failure  = false
+d24 1
+a24 1
+%% end $Id: erlview.hrl,v 1.1 2009/02/01 19:36:31 mmcdanie Exp mmcdanie $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d11 7
+a17 2
+	  , good_eval = {ok, fun_parsed}
+	  , bad_eval  = {error, fun_didnt_eval_try_another_fun}
+d24 1
+a24 1
+%% end $Id$
+@

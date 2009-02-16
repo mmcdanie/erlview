@@ -1,0 +1,7 @@
+
+-ifndef(STATE).
+-define(STATE, 1).
+-record(state, {}).
+-endif.
+
+%% end $Id$

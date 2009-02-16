@@ -1,0 +1,102 @@
+head	1.3;
+access;
+symbols
+	r024:1.3
+	nr001:1.1;
+locks
+	mmcdanie:1.3; strict;
+comment	@# @;
+
+
+1.3
+date	2009.02.16.04.05.37;	author mmcdanie;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.02.13.21.00.26;	author mmcdanie;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.02.06.15.12.05;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@checkpoint
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@%%
+%% to make from command line do following
+%%    erl -make
+%%
+%% run tests from interactive couchdb shell, couchdb -i
+%% 1> eunit:test(erlview, [verbose]).
+%%     ...
+%%  All 10 tests successful.
+%% 2> q().
+%
+
+{'*', [
+	{outdir, "../ebin"}
+       ,{i, "../include"}
+       ,{i, "../../couchdb/src/couchdb"}
+       ,{i, "../test"}
+       ,debug_info
+       ,strict_record_tests
+       ,netload
+
+%       , {d,debug}      %% uncomment for debug
+       , {d,test}	%% uncomment for dev/test ; 
+			%% remember to touch ../tests/* before remaking
+      ]	
+}.
+
+%% end $Id: Emakefile,v 1.2 2009/02/13 21:00:26 mmcdanie Exp mmcdanie $
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d15 1
+a15 1
+%       ,{i, "../../couchdb/src/couchdb"}
+d27 1
+a27 1
+%% end $Id: Emakefile,v 1.1 2009/02/06 15:12:05 mmcdanie Exp mmcdanie $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 6
+a9 2
+%% do not run tests from command line do following
+%%    erl -pa ../ebin -eval "eunit:test(erlview, [verbose]), init:stop()."
+d11 1
+d15 3
+a17 2
+       ,{i, "../tests"}
+%      ,debug_info
+d20 4
+a23 2
+%       , {d,debug}     %% uncomment for debug
+       , {d,test}      %% uncomment for dev/test and touch ../tests/*
+d26 2
+a27 1
+%% end $Id$
+@

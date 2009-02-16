@@ -1,0 +1,70 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2009.02.16.04.00.09;	author mmcdanie;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.02.01.19.35.35;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@%
+% NOT CURRENTLY USED
+%
+[
+
+ {kernel,
+  [    
+%   {start_timer, true} ,
+%   {inet_ssl_port, 4370},
+%   {inet_dist_listen_min, 4369},
+%   {inet_dist_listen_max, 4371}   
+  ]} ,
+
+
+%% rotating log and minimal tty
+{sasl, [
+         {sasl_error_logger, false},
+         %% define the parameters of the rotating log
+         %% the log file directory
+         {error_logger_mf_dir,"/usr/local/var/log/couchdb/error_logs"},
+         %% # bytes per logfile
+         {error_logger_mf_maxbytes,10485760}, % 10 MB
+         %% maximum number of logfiles
+         {error_logger_mf_maxfiles, 10}
+        ]}
+
+].
+
+%% end
+
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+%
+@

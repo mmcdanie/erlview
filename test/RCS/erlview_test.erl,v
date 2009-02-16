@@ -1,0 +1,560 @@
+head	1.6;
+access;
+symbols
+	r024:1.6
+	r010:1.5
+	r005:1.4
+	r004:1.4
+	r003:1.3
+	nr002:1.3
+	nr001:1.2;
+locks
+	mmcdanie:1.6; strict;
+comment	@# @;
+
+
+1.6
+date	2009.02.16.04.02.02;	author mmcdanie;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2009.02.11.04.41.51;	author mmcdanie;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.02.08.20.16.08;	author mmcdanie;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.02.06.16.41.43;	author mmcdanie;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.02.06.15.12.47;	author mmcdanie;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.02.01.19.35.57;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@%%%-------------------------------------------------------------------
+%%% File    : erlview_test.erl
+%%% Author  : mmcdanie <>
+%%% Description : intended to be -include("erlview_test.erl") by
+%%%               erlview.erl
+%%%
+%%% Currently needs to be run from within an interactive couchdb 
+%%% session.  And session needs restarting after the tests because
+%%% at the moment test funs are inserted into ets table but not
+%%% removed.
+%%%
+%%% Created : 31 Jan 2009 by mmcdanie <>
+%%%-------------------------------------------------------------------
+
+
+
+-ifdef(test).
+
+-include_lib("eunit/include/eunit.hrl").
+
+-include("erlview.hrl").
+
+
+% this must run before *_fun tests which depend on ets table being available
+ init_test() ->
+    case lists:member( couch_server, registered() ) of
+	true  -> dont_run_init_again ;
+
+	false -> exit(run_tests_from_interactive_couchdb)
+    end
+   , timer:sleep(333)
+.
+
+
+
+reset_test() -> 
+    Data = [1,2,3] ,
+    R = #response{} ,
+    ?assert(  R#response.success == gen_server:call(erlview, {reset, Data}) )
+%% handle_call({reset, Data}, self(), #state{}) )
+   , timer:sleep(333)
+.
+
+
+
+ets_clean( BinFuns ) ->
+
+    lists:map( fun(BinFun) ->
+		       FunStr = binary_to_list( BinFun ) ,
+		       {ok, Tokens, _} = erl_scan:string(FunStr) ,
+		       Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,
+		       ets:match_delete(?FUNTABLE, {Fcrypt, '$1'} )
+	       end , BinFuns )
+.
+
+
+prompt_test() ->
+    R = #response{} ,
+    Data  = [<<"add_fun">>, <<"fun(Doc) -> x end.">>] ,
+    ?assert(  R#response.success == gen_server:call(erlview, {prompt, Data}) )
+   , timer:sleep(333)
+.
+
+
+
+%% 
+%% How can I start erlview so the Pid is returned from this call ?
+%% I could eliminate the start_docs_map fun addition to couch_query_servers
+%%
+%% get_os_process(Lang) ->
+%%     gen_server:call(couch_query_servers, {get_proc, Lang})
+%%    , timer:sleep(333)
+%% .
+
+
+
+
+% expand this to enter funs from a file
+% also check that fun was inserted into ets table, and then remove it
+% from the table
+add_fun_1_test() -> 
+    Good_fun  = [<<"fun(Doc) -> x end.">>] ,
+    R = #response{} ,
+    ?assert( R#response.success == gen_server:call(erlview, {add_fun, Good_fun})) ,
+    ets_clean( Good_fun ) ,
+    timer:sleep(333)
+.
+
+
+
+add_fun_2_test() -> 
+    Good_funk = [<<"fun(Doc) -> y end.">> ,<<"fun(Doc) -> z end.">>] ,
+    R = #response{} ,
+    ?assert( R#response.success == gen_server:call(erlview, {add_fun, Good_funk})) ,
+    ets_clean( Good_funk ) ,
+    timer:sleep(333)
+.
+
+
+
+add_fun_3_test() -> 
+    Good_fun2 = [<<"fun( Doc ) -> \n  One = element(1,element(4,Doc)) ,\n  case lists:keysearch(<<\"when\">>, 1, One) of\n  {value, _Value} -> \n  {null, { lists:append(\n[ {<<\"_id\">>, element(2, Doc)},{<<\"_rev\">>,hd(element(3, Doc))}\n] , One) } } ;\n  _               -> []\n  end\nend.">>] ,
+    R = #response{} ,
+    ?assert(R#response.success == gen_server:call(erlview, {add_fun, Good_fun2})) ,
+    ets_clean( Good_fun2 ) ,
+    timer:sleep(333)
+.
+
+
+
+add_fun_4_test() -> 
+    Good_fun3 = [<<"fun( Doc ) -> \n  One = element(1,element(4,Doc)) ,\n  case lists:keysearch(<<\"when\">>, 1, One) of\n  {value, _Value} -> \n  {null, { lists:append(\n[ {<<\"_id\">>, element(2, Doc)},{<<\"_rev\">>,hd(element(3, Doc))}\n] , One) } } ;\n  _               -> []\n  end\nend.">>,
+                  <<"fun( Doc ) -> \n  One = element(1,element(4,Doc)) ,\n  case lists:keysearch(<<\"who\">>, 1, One) of\n  {value, _Value} -> \n  {null, { lists:append(\n[ {<<\"_id\">>, element(2, Doc)},{<<\"_rev\">>,hd(element(3, Doc))}\n] , One) } } ;\n  _               -> []\n  end\nend.">>] ,
+    R = #response{} ,
+    ?assert(R#response.success == gen_server:call(erlview, {add_fun, Good_fun3})) ,
+    ets_clean( Good_fun3 ) ,
+    timer:sleep(333)
+.
+
+
+
+add_fun_5_test() -> 
+    Bad_fun  = [<<"fun(Doc) -> x end ">>] ,   % missing end dot
+    R = #response{} ,
+    ?assert( R#response.success /= gen_server:call(erlview,
+						   {add_fun,
+						    Bad_fun})) ,
+    ?assert( R#response.bad_eval == gen_server:call(erlview,
+						    {add_fun,
+						     Bad_fun})) ,
+    timer:sleep(333)
+.
+
+
+
+add_fun_6_test() -> 
+    Bad_fun2 = [<<"function(doc) { emit(null, doc); }">>] , % javascript
+    R = #response{} ,
+    ?assert( R#response.success /= gen_server:call(erlview,
+						   {add_fun,
+						    Bad_fun2})) ,
+    
+    ?assert( R#response.bad_eval == gen_server:call(erlview,
+						    {add_fun,
+						     Bad_fun2})) ,
+    timer:sleep(333)
+.
+
+
+
+% expand this to enter docs from command line or read a file
+map_docs_test() -> 
+    Doc = 
+	{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+	 [<<"1998958978">>],
+	 {[{<<"who">>,<<"fuzzy bear">>},
+	   {<<"what">>,<<"a new test">>},
+	   {<<"when">>,<<"2009/01/17 23:30">>},
+	   {<<"note">>,
+	    <<"yadda yadda, SNL is on">>}]},
+	 [],false,[]} ,
+    
+    Response = gen_server:call(erlview, {map_doc, Doc}) ,
+    ?assert( is_list( Response ) ) ,
+    timer:sleep(333)
+.
+
+
+                    
+
+-else.
+-endif.
+%% end $Id: erlview_test.erl,v 1.5 2009/02/11 04:41:51 mmcdanie Exp mmcdanie $
+@
+
+
+1.5
+log
+@all pass
+@
+text
+@d66 8
+a73 5
+
+get_os_process(Lang) ->
+    gen_server:call(couch_query_servers, {get_proc, Lang})
+   , timer:sleep(333)
+.
+d173 1
+a173 1
+%% end $Id: erlview_test.erl,v 1.4 2009/02/08 20:16:08 mmcdanie Exp mmcdanie $
+@
+
+
+1.4
+log
+@all seven run successfully
+@
+text
+@d31 2
+a32 1
+ .
+d41 1
+d61 1
+a65 5
+add_js_test() -> 
+%%     Java_fun  = [<<"fun(Doc) -> x end.">>] ,
+    Java_fun  = [<<"function(doc) { emit(null, doc); }">>] ,
+    R = #response{} ,
+    Pid = get_os_process(<<"javascript">>) ,
+d67 3
+a69 4
+    ?assert( R#response.success == 
+	     couch_os_process:prompt(Pid, [<<"add_fun">>, Java_fun]) )
+
+%% gen_server:call(Pid, {add_fun, Good_fun})), ets_clean( Good_fun )
+a71 2
+get_os_process(Lang) ->
+    gen_server:call(couch_query_servers, {get_proc, Lang}).
+d75 10
+a84 1
+js_docs_test() -> 
+a85 45
+ Docs = 
+ [{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+                                    [<<"1998958978">>],
+                                    {[{<<"who">>,<<"fuzzy bear">>},
+                                      {<<"what">>,<<"a new test">>},
+                                      {<<"when">>,<<"2009/01/17 23:30">>},
+                                      {<<"note">>,
+                                       <<"yadda yadda, SNL is on">>}]},
+                                    [],false,[]},
+                               {doc,<<"63e0ea326c4321bff2608141e201c960">>,
+                                    [<<"3446932169">>],
+                                    {[{<<"myid">>,
+                                       <<"16522816470249139751422478824221512424025424784991883">>},
+                                      {<<"who">>,<<"pooh">>},
+                                      {<<"what">>,<<"apples">>},
+                                      {<<"when">>,<<"2009/01/18 02:02">>},
+                                      {<<"note">>,<<"yum, apples!">>}]},
+                                    [],false,[]},
+                               {doc,<<"9ec29aaccd31046d60bc4280c2af6394">>,
+                                    [<<"3984935616">>],
+                                    {[{<<"myid">>,
+                                       24354865410746211165167122214821582281671811395},
+                                      {<<"who">>,<<"pooh">>},
+                                      {<<"what">>,<<"carrots">>},
+                                      {<<"when">>,<<"2009/01/18 01:57">>},
+                                      {<<"note">>,<<"ya ya ya">>}]},
+                                    [],false,[]}] ,
+
+%%      Response = gen_server:call(erlview, {map_docs, Docs}) ,
+%%      ?assert( is_list( Response ) )
+    Pid = get_os_process(<<"javascript">>) ,
+
+            
+
+Json_docs = [ couch_doc:to_json_obj(Doc, []) || Doc <- Docs ] ,
+Response  = couch_os_process:prompt(Pid, [<<"map_doc">>, Json_docs]) ,
+{ok,Io} = file:open("/tmp/zoo", [write]) ,
+io:fwrite(Io, "===> R: ~p~n---~n~p", [Response,Json_docs]) ,
+file:close(Io) ,
+
+?assert( true == true )
+%%     ?assert( R#response.success == 
+%% 	     couch_os_process:prompt(Pid, [<<"map_doc">>, Json_docs]) )
+
+ .
+d88 7
+d98 1
+a98 11
+% Tue Feb  3 18:09:29 PST 2009 ; should run correctly first time and then fail
+% because fun has already been inserted into ets table and erlview won't insert
+% same fun twice; TODO: remove fun after each test (which means I have to 
+%
+% expand this to enter funs from command line
+% also check that fun was inserted into ets table, and then remove it
+% from the table
+add_fun_test() -> 
+    Good_fun  = [<<"fun(Doc) -> x end.">>] ,
+    Good_funk = [<<"fun(Doc) -> y end.">> ,<<"fun(Doc) -> z end.">>] ,
+% fix add_fun so it operates over a list
+d100 9
+d111 9
+a120 2
+    Bad_fun2 = [<<"function(doc) { emit(null, doc); }">>] , % javascript
+
+d122 8
+a129 2
+    ?assert( R#response.success == gen_server:call(erlview, {add_fun, Good_fun}))
+, ets_clean( Good_fun )
+a130 2
+    , ?assert( R#response.success == gen_server:call(erlview, {add_fun, Good_funk}))
+, ets_clean( Good_funk )
+a131 2
+     ,?assert(R#response.success == gen_server:call(erlview, {add_fun, Good_fun2}))
+, ets_clean( Good_fun2 )
+d133 12
+a144 16
+     ,?assert(R#response.success == gen_server:call(erlview, {add_fun, Good_fun3}))
+, ets_clean( Good_fun3 )
+
+     , ?assert( R#response.success /= gen_server:call(erlview,
+ 						       {add_fun,
+ 							Bad_fun}))
+     , ?assert( R#response.success /= gen_server:call(erlview,
+ 						       {add_fun,
+ 							Bad_fun2}))
+
+     , ?assert( R#response.bad_eval == gen_server:call(erlview,
+ 						      {add_fun,
+ 						       Bad_fun}))
+     , ?assert( R#response.bad_eval == gen_server:call(erlview,
+ 						      {add_fun,
+ 						       Bad_fun2}))
+a145 1
+.
+d149 15
+a163 32
+ map_docs_test() -> 
+ Docs = 
+ [{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+                                    [<<"1998958978">>],
+                                    {[{<<"who">>,<<"fuzzy bear">>},
+                                      {<<"what">>,<<"a new test">>},
+                                      {<<"when">>,<<"2009/01/17 23:30">>},
+                                      {<<"note">>,
+                                       <<"yadda yadda, SNL is on">>}]},
+                                    [],false,[]},
+                               {doc,<<"63e0ea326c4321bff2608141e201c960">>,
+                                    [<<"3446932169">>],
+                                    {[{<<"myid">>,
+                                       <<"16522816470249139751422478824221512424025424784991883">>},
+                                      {<<"who">>,<<"pooh">>},
+                                      {<<"what">>,<<"apples">>},
+                                      {<<"when">>,<<"2009/01/18 02:02">>},
+                                      {<<"note">>,<<"yum, apples!">>}]},
+                                    [],false,[]},
+                               {doc,<<"9ec29aaccd31046d60bc4280c2af6394">>,
+                                    [<<"3984935616">>],
+                                    {[{<<"myid">>,
+                                       24354865410746211165167122214821582281671811395},
+                                      {<<"who">>,<<"pooh">>},
+                                      {<<"what">>,<<"carrots">>},
+                                      {<<"when">>,<<"2009/01/18 01:57">>},
+                                      {<<"note">>,<<"ya ya ya">>}]},
+                                    [],false,[]}] ,
+
+     Response = gen_server:call(erlview, {map_docs, Docs}) ,
+     ?assert( is_list( Response ) )
+ .
+d170 1
+a170 1
+%% end $Id: erlview_test.erl,v 1.3 2009/02/06 16:41:43 mmcdanie Exp mmcdanie $
+@
+
+
+1.3
+log
+@passes all 5 tests
+@
+text
+@d61 71
+d169 1
+a169 1
+     , ?assert( R#response.failure == gen_server:call(erlview,
+d172 1
+a172 1
+     , ?assert( R#response.failure == gen_server:call(erlview,
+d218 1
+a218 1
+%% end $Id: erlview_test.erl,v 1.2 2009/02/06 15:12:47 mmcdanie Exp mmcdanie $
+@
+
+
+1.2
+log
+@checkpoint
+@
+text
+@d55 6
+d109 32
+a140 32
+%% map_docs_test() -> 
+%% Docs = 
+%% [{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+%%                                    [<<"1998958978">>],
+%%                                    {[{<<"who">>,<<"fuzzy bear">>},
+%%                                      {<<"what">>,<<"a new test">>},
+%%                                      {<<"when">>,<<"2009/01/17 23:30">>},
+%%                                      {<<"note">>,
+%%                                       <<"yadda yadda, SNL is on">>}]},
+%%                                    [],false,[]},
+%%                               {doc,<<"63e0ea326c4321bff2608141e201c960">>,
+%%                                    [<<"3446932169">>],
+%%                                    {[{<<"myid">>,
+%%                                       <<"16522816470249139751422478824221512424025424784991883">>},
+%%                                      {<<"who">>,<<"pooh">>},
+%%                                      {<<"what">>,<<"apples">>},
+%%                                      {<<"when">>,<<"2009/01/18 02:02">>},
+%%                                      {<<"note">>,<<"yum, apples!">>}]},
+%%                                    [],false,[]},
+%%                               {doc,<<"9ec29aaccd31046d60bc4280c2af6394">>,
+%%                                    [<<"3984935616">>],
+%%                                    {[{<<"myid">>,
+%%                                       24354865410746211165167122214821582281671811395},
+%%                                      {<<"who">>,<<"pooh">>},
+%%                                      {<<"what">>,<<"carrots">>},
+%%                                      {<<"when">>,<<"2009/01/18 01:57">>},
+%%                                      {<<"note">>,<<"ya ya ya">>}]},
+%%                                    [],false,[]}] ,
+
+%%     Response = gen_server:call(erlview, {map_docs, Docs}) ,
+%%     ?assert( is_list( Response ) )
+%% .
+d147 1
+a147 1
+%% end $Id: erlview_test.erl,v 1.1 2009/02/01 19:35:57 mmcdanie Exp mmcdanie $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d33 3
+a35 1
+prompt_test() -> 
+d38 2
+a39 3
+    ?assert( {reply,
+	      R#response.true,
+	      #state{}} == handle_call({prompt, Data}, self(), #state{}) )
+d42 10
+a51 6
+reset_test() -> 
+    Data = [1,2,3] ,
+    R = #response{} ,
+    ?assert( {reply, 
+	      R#response.true ,
+	      #state{}} == handle_call({reset, Data}, self(), #state{}) )
+d54 5
+a58 1
+% 
+d63 6
+a68 1
+    Good_fun = [<<"fun(Doc) -> x end.">>] ,
+d73 2
+d76 2
+a77 1
+    ?assert( R#response.good_eval == gen_server:call(erlview, {add_fun, Good_fun}))
+d79 19
+a97 13
+    , ?assert( R#response.good_eval /= gen_server:call(erlview,
+						       {add_fun,
+							Bad_fun}))
+    , ?assert( R#response.good_eval /= gen_server:call(erlview,
+						       {add_fun,
+							Bad_fun2}))
+
+    , ?assert( R#response.bad_eval == gen_server:call(erlview,
+						      {add_fun,
+						       Bad_fun}))
+    , ?assert( R#response.bad_eval == gen_server:call(erlview,
+						      {add_fun,
+						       Bad_fun2}))
+d103 32
+a134 32
+map_docs_test() -> 
+Docs = 
+[{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+                                   [<<"1998958978">>],
+                                   {[{<<"who">>,<<"fuzzy bear">>},
+                                     {<<"what">>,<<"a new test">>},
+                                     {<<"when">>,<<"2009/01/17 23:30">>},
+                                     {<<"note">>,
+                                      <<"yadda yadda, SNL is on">>}]},
+                                   [],false,[]},
+                              {doc,<<"63e0ea326c4321bff2608141e201c960">>,
+                                   [<<"3446932169">>],
+                                   {[{<<"myid">>,
+                                      <<"16522816470249139751422478824221512424025424784991883">>},
+                                     {<<"who">>,<<"pooh">>},
+                                     {<<"what">>,<<"apples">>},
+                                     {<<"when">>,<<"2009/01/18 02:02">>},
+                                     {<<"note">>,<<"yum, apples!">>}]},
+                                   [],false,[]},
+                              {doc,<<"9ec29aaccd31046d60bc4280c2af6394">>,
+                                   [<<"3984935616">>],
+                                   {[{<<"myid">>,
+                                      24354865410746211165167122214821582281671811395},
+                                     {<<"who">>,<<"pooh">>},
+                                     {<<"what">>,<<"carrots">>},
+                                     {<<"when">>,<<"2009/01/18 01:57">>},
+                                     {<<"note">>,<<"ya ya ya">>}]},
+                                   [],false,[]}] ,
+
+    Response = gen_server:call(erlview, {map_docs, Docs}) ,
+    ?assert( is_list( Response ) )
+.
+d141 1
+a141 1
+%% end $Id$
+@

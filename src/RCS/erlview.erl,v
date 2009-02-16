@@ -1,0 +1,3514 @@
+head	1.33;
+access;
+symbols
+	r024:1.33
+	r023:1.31
+	r022:1.30
+	r021:1.29
+	r020:1.28
+	r019:1.27
+	r018:1.26
+	r017:1.25
+	r016:1.24
+	r015:1.23
+	r014:1.22
+	r013:1.21
+	r012:1.20
+	r011:1.17
+	r010:1.16
+	r009:1.15
+	r008:1.14
+	r007:1.13
+	r005:1.12
+	r004:1.11
+	r003:1.10
+	nr002:1.9
+	nr001:1.8;
+locks
+	mmcdanie:1.33; strict;
+comment	@# @;
+
+
+1.33
+date	2009.02.16.04.06.25;	author mmcdanie;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2009.02.16.03.59.18;	author mmcdanie;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2009.02.16.03.52.40;	author mmcdanie;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2009.02.15.18.03.25;	author mmcdanie;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2009.02.15.17.27.45;	author mmcdanie;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2009.02.15.15.35.48;	author mmcdanie;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2009.02.15.08.31.19;	author mmcdanie;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2009.02.15.07.51.17;	author mmcdanie;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2009.02.15.02.28.35;	author mmcdanie;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2009.02.15.02.02.43;	author mmcdanie;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2009.02.14.17.10.57;	author mmcdanie;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2009.02.14.05.42.27;	author mmcdanie;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2009.02.14.05.08.40;	author mmcdanie;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2009.02.14.04.57.06;	author mmcdanie;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2009.02.14.04.20.47;	author mmcdanie;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2009.02.13.20.59.57;	author mmcdanie;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2009.02.11.06.47.21;	author mmcdanie;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2009.02.11.02.56.03;	author mmcdanie;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2009.02.10.06.24.12;	author mmcdanie;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2009.02.09.22.09.26;	author mmcdanie;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2009.02.09.20.36.14;	author mmcdanie;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2009.02.09.02.27.10;	author mmcdanie;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2009.02.08.20.16.23;	author mmcdanie;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2009.02.06.16.55.50;	author mmcdanie;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2009.02.06.16.39.59;	author mmcdanie;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2009.02.06.15.12.05;	author mmcdanie;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2009.02.04.23.19.55;	author mmcdanie;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2009.02.01.21.50.03;	author mmcdanie;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2009.02.01.21.48.37;	author mmcdanie;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2009.02.01.19.35.35;	author mmcdanie;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2009.01.31.22.50.35;	author mmcdanie;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2009.01.31.17.04.08;	author mmcdanie;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2009.01.31.02.32.06;	author mmcdanie;	state Exp;
+branches;
+next	;
+
+
+desc
+@Erlang view server for CouchDB
+@
+
+
+1.33
+log
+@*** empty log message ***
+@
+text
+@%%%-------------------------------------------------------------------
+%%% File    : $Id: erlview.erl,v 1.32 2009/02/16 03:59:18 mmcdanie Exp mmcdanie $
+%
+%% @@doc erlview, an Erlang View Server for CouchDB
+%
+% Copyright 2009 Michael McDaniel [http://autosys.us]
+%
+% Licensed under the Apache License, Version 2.0 (the "License"); 
+% you may not use this file except in compliance with the License. 
+%
+% You may obtain a copy of the License at
+% http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, 
+% software distributed under the License is distributed on an 
+% "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+% either express or implied. 
+%
+% See the License for the specific language governing permissions
+% and limitations under the License. 
+%
+% @@author   : (originally) Michael McDaniel [http://autosys.us]
+% @@reference: used with CouchDB [http://couchdb.apache.org]
+% @@reference: Coming soon to <a href="http://github.com">http://github.com.</a>
+%%
+%%
+%% 
+%%
+%% @@type key_pairs(). List of {field, content} where field::binary() and content::binary() describe document field names or field contents.
+%%
+%% @@type fields(). List of field names where field::binary() describes a document field name.
+%%
+%% @@end
+%%
+%%% Description : 
+%%% Created : 24 Jan 2009 by mmcdanie <>
+%%
+%% $Log: erlview.erl,v $
+%% Revision 1.32  2009/02/16 03:59:18  mmcdanie
+%% *** empty log message ***
+%%
+%% Revision 1.31  2009/02/16 03:52:40  mmcdanie
+%% *** empty log message ***
+%%
+%% Revision 1.30  2009/02/15 18:03:25  mmcdanie
+%% just worked correctly with entire_doc( ... who/when/what/note ... ) 
+%% and name/view matched fine.  
+%% Using Fcrypt key in handle_call( {map_doc ...) and dropped ordered_set
+%% option when creating both ets tables (cdb_table and erlview_queue)
+%%
+%% Revision 1.29  2009/02/15 17:27:45  mmcdanie
+%% added a queue table for, I think, preventing multiple concurrent views
+%% from running every map fun again; i.e. when a new handle_call( {map_fun ...)
+%% is called, it checks if the queue table is empty and if so, populates it
+%% with all map funs stored in the cdb_table and then removes each fun
+%% (not quite implemented) as it runs it; contrary,
+%% if a new handle_call( {map_fun ...) is called and the table is not empty,
+%% it uses the map funs in the queue table
+%% Currently, as long as each map fun is entered correct (in Futon) then everything
+%% runs; still have name/view mixup (??!!??$#%!!!), and need to check for bad eval
+%% and runtime errors.
+%%
+%% ... see 'rlog erlview.erl' for missing log notes
+%%
+%% Revision 1.26  2009/02/15 07:51:17  mmcdanie
+%% works now and can correct bad map funs whether the problem is bad eval or runtime
+%% error; HOWEVER, the name/view relationship is still mixed up as after adding
+%% multiple names (at least, in Futon) when I call a view it is not the same as
+%% the name of the view (i.e. the output is for a different name).
+%% So, still don't know what's up with that but at least CDB doesn't need
+%% restarting now just because a bad map fun was entered (runtime error map fun).
+%%
+%% Revision 1.25  2009/02/15 02:28:35  mmcdanie
+%% seems to work, i.e. each implemented map fun helper.  Though the name/view still
+%% gets mixed up and a bad view can spoil the bunch.  I think that if a map fun
+%% has a runtime failure, that's what messes everything up.  Maybe figure out
+%% how to catch the runtime failure and remove that view from ets.  Because,
+%% it's stuck there when the view is resaved (because the key in ets is
+%% a crypt of the fun).  Hmm, if I can figure out how to capture the name under
+%% which the map fun is saved then this might not be a problem (i.e. overwrite
+%% the runtime erroring fun).  That can't be that hard, can it? Finding out
+%% the name under which a map fun is saved?
+%%
+%% Revision 1.23  2009/02/14 17:10:57  mmcdanie
+%% each helper fun seems to work ok in a map fun, but only the first time
+%% (unless I save a view); something is still messed up w/saving & recovering
+%% funs
+%%
+%%
+%% Revision 1.16  2009/02/11 02:56:03  mmcdanie
+%% hurray!  I can now return a subset of documents.  Change was in xemit
+%% (of course) and the "not found" return value is the entire document
+%%  without the Key
+%%
+%% Revision 1.15  2009/02/10 06:24:12  mmcdanie
+%% xemit/2 now working for simple pattern; can't yet find a field content, only
+%% if the field exists
+%%
+%% Revision 1.13  2009/02/09 20:36:14  mmcdanie
+%% fun(Body) -> erlview:xemit(Body) end.  will now work.
+%% need to fully qualify xemit, and note that the name emit causes
+%% failure (apparently
+%%
+%%
+%% Revision 1.6  2009/02/01 21:50:03  mmcdanie
+%% someday I'll remember to compile before saving !
+%%
+%% Revision 1.5  2009/02/01 21:48:37  mmcdanie
+%% works with proper stored function (only tested with a single function
+%% and three documents)
+%%
+%% ...
+%%
+%% Revision 1.1  2009/01/31 02:32:06  mmcdanie
+%% Initial revision
+%%
+%% TODO:
+%%
+%%DONE 1) in handle_call( {map_doc ... ) figure out what consitutes null for a 
+%%     fun(Body) view  (as in, don't show document N)
+%%     [answer: leave off the Key value when returning the doc, see code, Luke]
+%%DONE  2) make some helper funs for writing views ala jsscript emit(null, doc.name)
+%%(though they're named 'funny')
+%%  3) when I save two or more views in Futon, the wrong one runs for the name
+%%     (i.e. they're swapped); s'up with that?  I'm guessing something about how
+%%     the funs are saved and called to run
+%%DONE  4) rewrite one_field to be find_all_fields
+%%  5) Add magic word 'all' or 'doc' to each helper fun so that the entire document
+%%     can be returned instead of enumerating each field.  If Out_fields = all
+%%     return entire doc (i.e. if requisite keys are found).  That way the silly
+%%     entire_doc/2 fun can be eliminated.
+%%  6) Implement reduce.
+%%  7) Implement log.
+%%  8) Add search for any doc field (already finding body fields)
+%%     #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}
+%%  9)
+%% 10)
+%% 11)
+%%
+%%
+%% NOTES:
+%% 1) In /usr/local/etc/couchdb/local.ini 
+%%    I have the following (not as comments, of course)
+%
+%    erlang = erl -sname fubar -noshell -detached   (NEEDED on earlier CDB)
+%    erlang = /dev/null  (THIS WORKS w/v 740870
+%    [daemons]
+%    erlview = {erlview, start_link, []}
+%
+%% The 'erlang = ...' line is apparently needed so that Futon (and maybe other
+%% parts of cdb) recognizes erlang as a language ; 
+%% I _think_ the following works as well and gives up the memory when it stops;
+%% I need to test it in more situations but a simple case worked ok.
+%
+%   erlang = erl -eval 'timer:sleep(3000), init:stop().'
+%
+%%
+%% 2) If a reset is needed this will work ... 
+%%    curl  -X POST --header "Content-Type: application/erlang"  \
+%%       http://192.168.1.7:5984/daptest/_slow_view/reset
+%%
+%% 3) I'm not sure if deleted or meta data should be included in the
+%%    returned documents.
+%%
+%%%-------------------------------------------------------------------
+-module(erlview).
+
+-behaviour(gen_server).
+
+-include("debug.hrl").
+-include("erlview.hrl").
+-include("couch_db.hrl").
+%% #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}=Doc
+
+-define(SERVER, ?MODULE).
+-define(FUNTABLE, cdb_table).
+-define(QTABLE, erlview_queue).
+
+-define(ERROR(T),error_logger:error_report([process_info(self(),current_function)|T])).
+%% API
+%% -compile(export_all).  %% TESTING ONLY
+
+-export([start_link/0]).
+%% map fun helper funs
+-export([find_all_content/2, find_any_content/2]).
+-export([find_all_fields/2, find_any_fields/2, entire_doc/2]).
+
+%% gen_server callbacks
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2,
+	 terminate/2, code_change/3]).
+
+
+-include("erlview_test.erl"). %for testing; has to be after all -export/1
+
+
+
+%%====================================================================
+%% API
+%%====================================================================
+%%--------------------------------------------------------------------
+%% Function: start_link() -> {ok,Pid} | ignore | {error,Error}
+%% Description: Starts the server
+%%--------------------------------------------------------------------
+start_link() ->
+    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+
+
+
+%%====================================================================
+%% Helper funs, used in map funs
+%%====================================================================
+
+%% @@doc
+%% Used in map funs, finds documents having any of the requested content, NOT IMPLEMENTED
+%%
+%% returns docs containing a foo of "new", and myid of "123"
+%% and returns fields myid,who,when
+%% fun(Doc) -> erlview:find_any_content(Doc,
+%%                          {[ {&lt;&lt;"foo"&gt;&gt;, &lt;&lt;"new"&gt;&gt;}, 
+%%                             {&lt;&lt;"myid"&gt;&gt;, &lt;"123"&gt;&gt;} ] 
+%%                           [ &lt;&lt;"myid"&gt;&gt;, 
+%%                             &lt;&lt;"who"&gt;&gt;, 
+%%                             &lt;&lt;"when"&gt;&gt; ] 
+%%                          } )
+%% end.
+%%
+%%
+%% find_any_content( Doc::doc(), { Key_pairs::key_pairs() ,
+%%                            Out_fields::fields() } ) -> doc()
+%% @@end
+find_any_content( _Doc, {_Key_pairs, _Out_fields} ) -> 
+    {error, not_implemented}
+.
+
+
+
+%% @@doc
+%% Used in map funs, finds documents having all of the requested content.
+%%
+%% The following map fun would return all documents which contain "pooh" in the 
+%% "who" field and "carrots" in the "what" field, but would only return document
+%% fields "who", "when", and "what" from those documents.  Returns first Key 
+%% content as 'Key' (i.e. what you'll see in Futon's 'Key' column on left)
+%%
+%%<pre>
+%% fun(Doc) ->
+%%    erlview:find_all_content( Doc,
+%%                         { [{&lt;&lt;"who"&gt;&gt;,
+%%                             &lt;&lt;"pooh"&gt;&gt;},
+%%                            {&lt;&lt;"what"&gt;&gt;
+%%                             &lt;&lt;"carrots"&gt;&gt;],
+%%                           [ &lt;&lt;"myid"&gt;&gt;,
+%%                             &lt;&lt;"who"&gt;&gt;,
+%%                             &lt;&lt;"when"&gt;&gt; ]
+%%                          } )
+%% end.
+%%</pre>
+%%
+%%
+%% @@spec find_all_content( Doc::doc(), 
+%%                    { Key_pairs::key_pairs() ,
+%%                      Out_fields::fields() } ) -> doc()
+%%
+%% @@end
+find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
+    #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
+?LOG( [{Body, {Key_pairs, Out_fields}}] ) ,
+
+    Eb = element(1, Body) ,
+						% do all Key_pairs match some 
+						% Body field ; Match == true/false
+    Truth_list = lists:map(fun(K) -> 
+				   lists:map( 
+				     fun(Bt) -> K == Bt end, 
+				     Eb )
+			   end,
+			   Key_pairs) ,
+    Match = case  lists:all( fun(T) -> 
+				     lists:member(true,T) 
+			     end,
+			     Truth_list )
+		of true -> true ;
+		  false -> false
+	    end ,
+    
+    Display_Fields =
+ 	case Match
+ 	    of false          -> Vk = <<"null">>, [] ;
+ 	    true              -> Vk = element(2, hd(Key_pairs)) ,
+		lists:map( fun(K) -> 
+				   case lists:keysearch(K, 1, Eb) of
+				       {value, V} -> V ;
+				       _          -> []
+				   end
+			   end,
+			   Out_fields ) 
+ 	end ,
+
+    Out = case (lists:flatlength(Display_Fields) > 0) and Match
+	      of true ->
+		  [{ Vk, {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Display_Fields } }] ;
+	      _       -> 
+		  [{     {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Body } }]
+	  end ,
+
+%% io:fwrite("~n~n===> Vk: ~p~nDisplay_Fields: ~p~nTruth_list: ~p~nMatch: ~p~nOut: ~p~n~n",
+%% [Vk, Display_Fields, Truth_list, Match, Out]) ,
+
+    Out
+. % find_all_content/2 (formerly xemitx/2)
+
+
+
+
+
+%% @@doc
+%% Used in map funs, finds documents having any of the requested fields, NOT IMPLEMENTED
+%%
+%% fun(Doc) -> erlview:find_any_fields( Doc, { &lt;&lt;"who"&gt;&gt;, 
+%%                                       [&lt;&lt;"who"&gt;&gt;,
+%%                                        &lt;&lt;"what"&gt;&gt;,
+%%                                        &lt;&lt;"when"&gt;&gt;] } )
+%% end.
+%%
+%% If any Keys are found in Doc, returns fields requested via Out_fields argument.
+%%
+%% @@spec find_any_fields( Doc::doc(), { Keys::fields(), [Out_fields::fields()] } ) -> doc()
+%% @@end
+find_any_fields( _Doc, {_Keys, _Out_fields} ) ->
+  {error, not_implemented}
+.
+
+
+
+
+
+%% @@doc
+%% Used in map funs, finds documents containing all requested fields.
+%%
+%%<pre>
+%% fun(Doc) -> 
+%%     erlview:find_all_fields( Doc, { [&lt;&lt;"who"&gt;&gt;, 
+%%                                        &lt;&lt;"what"&gt;&gt;],
+%%                                       [&lt;&lt;"who"&gt;&gt;,
+%%                                        &lt;&lt;"what"&gt;&gt;,
+%%                                        &lt;&lt;"when"&gt;&gt;] } )
+%% end.
+%%</pre>
+%%
+%% If all Keys are found in Doc, returns Out_fields.  Returns first Key 
+%% 'Key' (i.e. what you'll see in Futon's 'Key' column on left)
+%%
+%% @@spec find_all_fields( Doc::doc(), { [Keys::fields()], [Out_fields::fields()] } ) -> doc()
+%% @@end
+%% find_all_fields( Doc, {Keys, all} ) ->
+find_all_fields( Doc, {Keys, Out_fields} ) ->
+    #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
+?LOG( [{Body, {Keys, Out_fields}}] ) ,
+
+    Eb = element(1, Body) ,
+    Vk = hd(Keys) ,
+    Fields = lists:map( fun(K) -> 
+				case lists:keysearch(K, 1, Eb) of
+				    {value, V} -> V ;
+				    _          -> []
+				end
+			end,
+			Out_fields ) ,
+
+						% do all Keys match some 
+						% Body field ; Match == true/false
+    Truth_list = lists:map(fun(K) -> 
+				   lists:map( 
+				     fun(Bt) -> K == element(1,Bt) end, 
+				     Eb )
+			   end,
+			   Keys) ,
+    Match = case  lists:all( fun(T) -> 
+				     lists:member(true,T) 
+			     end,
+			     Truth_list )
+		of true -> true ;
+		  false -> false
+	    end ,
+
+     Out = case (lists:flatlength(Fields) > 0) and Match
+	       of true ->
+		   [{ Vk, {[{<<"_id">>,Id}] 
+			   ++ [{<<"_rev">>,hd(Revs)}] 
+			   ++ Fields } }] ;
+	       _       -> 
+		   [{     {[{<<"_id">>,Id}] 
+			   ++ [{<<"_rev">>,hd(Revs)}] 
+			   ++ Body } }]
+	   end , 
+
+    Out
+. % find_all_fields/2
+
+
+
+
+% @@doc
+% Used in map funs, finds documents containing requested field, returns entire doc.
+%
+% used thusly from map funs ...
+%
+% fun(Doc) -> erlview:entire_doc( Doc, { &lt;&lt;"who"&gt;&gt;, all } ) end.
+%
+% If Key is found in Doc, returns entire doc.
+%
+% @@spec entire_doc( Doc::doc(), {Key::key(), all} ) -> doc()
+%
+% @@end
+entire_doc( Doc, {Key, all} ) ->
+    #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
+    Eb = element(1, Body) ,
+    Fields =
+	case lists:keysearch(Key, 1, Eb) 
+	    of false          -> Vk = <<"null">>, [] ;
+	    {value, {Key,Vk}} -> Eb
+	end ,
+
+    Out = case lists:flatlength(Fields) > 0
+	      of true ->
+		  [{ Vk, {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Eb } }] ;
+	      _       -> 
+		  [{     {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Eb } }]
+	  end , 
+
+    Out
+. % entire_doc/2
+
+
+
+%% when add_fun is called, then map_doc gets called to run a view
+
+
+
+
+%%====================================================================
+%% gen_server callbacks
+%%====================================================================
+
+%%--------------------------------------------------------------------
+%% Function: init(Args) -> {ok, State} |
+%%                         {ok, State, Timeout} |
+%%                         ignore               |
+%%                         {stop, Reason}
+%% Description: Initiates the server
+%%--------------------------------------------------------------------
+init([]) ->
+%% io:fwrite("~n~n===> INIT~n~n",[]) ,
+    ets:new(?FUNTABLE, [public, named_table]) ,
+    ets:new(?QTABLE, [public, named_table]) ,
+%%     ets:new(?FUNTABLE, [public, named_table, ordered_set]) ,
+%%     ets:new(?QTABLE, [public, named_table, ordered_set]) ,
+
+    {ok, #state{fun_was="init"}}
+. % init/1
+
+
+
+%%--------------------------------------------------------------------
+%% Function: %% handle_call(Request, From, State) -> {reply, Reply, State} |
+%%                                      {reply, Reply, State, Timeout} |
+%%                                      {noreply, State} |
+%%                                      {noreply, State, Timeout} |
+%%                                      {stop, Reason, Reply, State} |
+%%                                      {stop, Reason, State}
+%% Description: Handling call messages
+%%--------------------------------------------------------------------
+%% handle_call(_Request, _From, State) ->
+%%     Reply = ok,
+%%     {reply, Reply, State}
+%% ;
+
+
+%% [ H | T ] = Data in  couch_os_process:prompt(Pid, Data)
+%%                       (called from couch_query_servers)
+%% 
+%% [ H | T ] = [<<"add_fun">>,<<"function(doc) {\n  emit(null, doc);\n}">>]
+%% H = <<"add_fun">> ,
+%% T = <<"function(doc) {\n  emit(null, doc);\n}">> ,
+%
+handle_call({prompt, [ H | T ] = _Data}, _From, State) ->
+    ?LOG([{?MODULE, prompt, _Data}, _From, State]) ,
+
+    case H of
+	<<"add_fun">> -> handle_call( {add_fun, T}, _From, State  )  ;
+	<<"map_doc">> -> handle_call( {map_doc, hd(T)}, _From, State ) ;
+	<<"reset">>   -> handle_call( {reset, x}, _From, State )
+%%                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+%% need to call handle_call/3 directly 
+%%
+%% cannot "layer" gen_server:calls as below,
+%% caller of initiating gen_server:call(erlview, {prompt, Data})
+%% receives a timeout when doing the below
+%%
+%%   	<<"add_fun">> -> gen_server:call(?MODULE, {add_fun, T} ) ;
+%%   	<<"map_doc">> -> gen_server:call(?MODULE, {map_docs, T} )
+     end
+;
+handle_call({reset, _Data}, _From, State) ->
+    ?LOG([{reset, _Data}, _From, State]) ,
+    erlang:garbage_collect() ,
+    ets:match_delete(?FUNTABLE, '$1') ,
+    R = #response{} ,
+    {reply, R#response.success, #state{fun_was="reset"}}
+;
+handle_call( {add_fun, BinFunctions}, _From, State ) ->
+    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, State]) ,
+%
+%% thanks to:
+%% http://erlang.org/pipermail/erlang-questions/2003-November/010544.html
+%% for the scan/parse/eval
+%%
+%% NOTE that a map fun can evaluate as valid but may have a runtime error.
+%%      Worthwhile to put some good feedback in the
+%%      funs so when they fail I can figure out why.
+
+    R = #response{} ,
+    
+    Reply =
+	lists:foldl(
+	  fun(BinFunction, Acc) ->
+		  Acc ,
+		  try
+		      FunStr = binary_to_list( BinFunction ) ,
+		      {ok, Tokens, _} = erl_scan:string(FunStr) ,
+		      {ok, [Form]} = erl_parse:parse_exprs(Tokens) ,
+		      Bindings = erl_eval:new_bindings() ,
+		      {value, Fun, _} = erl_eval:expr(Form, Bindings) ,
+
+						% ets overwrites identical records
+%% I test by deleting _design/erl doc in db, compact db,
+%% 'rm ... .test_design/erl.view', restart CDB
+
+%% using the Fcrypt, name/views are mixed but entire_doc(who/when/what/note) all
+%% work (only tested by entering each correctly first time in that order)
+%
+% THIS JUST WORKED CORRECTLY all who/when/what/note AFTER I DROPPED the 
+% ordered_set option on both ets tables
+     		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
+     		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
+
+%% using the Key, name/views are mixed but entire_doc(who/when/what/note) do not
+%% all work (only tested by entering each correctly first time in that order, 
+%% and the note one didn't work, no ouput, and then when/what had same what
+%% output, there was no note output at all)
+%
+%%     		      Key = calendar:datetime_to_gregorian_seconds({date(),time()}),
+%%     		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun)}) 
+
+		  of true        -> R#response.success ;
+
+                  {error, R}     -> R#response.ets_fail
+	           
+		  catch _:_      ->
+			  ?ERROR([ R#response.bad_eval ]) ,
+			  R#response.bad_eval
+
+		  end 
+	  end, 
+	  "", 
+	  BinFunctions ) ,
+
+    {reply, Reply, #state{fun_was="add_fun"}}
+
+%handle_call/3  add_fun
+;
+handle_call({map_doc, Doc} , _From , State) ->
+    List_of_funs = ets:tab2list(?FUNTABLE) ,
+
+%% TODO
+%% OK, here's the thing.  Let's say a list of funs is now in the ?QTABLE and
+%% they're running in the 'L = lists:map ...'.
+%% NOW, another new fun is add_fun'd and now handle_call( {map_doc...) gets
+%% called again.
+%% The NEW handle_call( {map_doc...) sees that the ?QTABLE is *not* empty
+%% so just pops off the remaining funs, and the newly add_fun'd fun never
+%% runs.  Right ?
+%% SO, maybe the thing to do is for add_fun to add the new (in the db) fun
+%% to the ?QTABLE itself, before it exits.  Then, the ?QTABLE will always
+%% have a new add_fun'd fun on it until a handle_call( {map_doc...) is called.
+
+
+    case ets:match(?QTABLE, '$1')
+	of []  -> ets:insert(?QTABLE, List_of_funs) ;
+	_      -> noop
+    end ,
+
+    Fun_list = ets:tab2list(?QTABLE) ,
+
+%%     L = lists:map( fun(Fa) -> G = binary_to_term( element(2, hd(Fa))) , 
+    L = lists:map( fun(Fa) -> G = binary_to_term( element(2, Fa)) , 
+			      try  (catch G(Doc))
+			      of {'EXIT', _}  -> exit(runtime_error_map_fun) ;
+			      Gx              -> ets:match_delete(?QTABLE, Fa), Gx
+			      catch _:_       -> exit(runtime_error_map_fun) 
+			      end
+		   end ,
+ 		   Fun_list ) ,
+%%  		   List_of_funs ) ,
+
+    {reply, L, #state{fun_was="map_doc"}}
+.%handle_call map_doc
+
+
+
+
+%%--------------------------------------------------------------------
+%% Function: handle_cast(Msg, State) -> {noreply, State} |
+%%                                      {noreply, State, Timeout} |
+%%                                      {stop, Reason, State}
+%% Description: Handling cast messages
+%%--------------------------------------------------------------------
+handle_cast(_Msg, State) ->
+    {noreply, State}.
+
+%%--------------------------------------------------------------------
+%% Function: handle_info(Info, State) -> {noreply, State} |
+%%                                       {noreply, State, Timeout} |
+%%                                       {stop, Reason, State}
+%% Description: Handling all non call/cast messages
+%%--------------------------------------------------------------------
+handle_info(_Info, State) ->
+    {noreply, State}.
+
+%%--------------------------------------------------------------------
+%% Function: terminate(Reason, State) -> void()
+%% Description: This function is called by a gen_server when it is about to
+%% terminate. It should be the opposite of Module:init/1 and do any necessary
+%% cleaning up. When it returns, the gen_server terminates with Reason.
+%% The return value is ignored.
+%%--------------------------------------------------------------------
+terminate(_Reason, _State) ->
+    ok.
+
+%%--------------------------------------------------------------------
+%% Func: code_change(OldVsn, State, Extra) -> {ok, NewState}
+%% Description: Convert process state when code is changed
+%%--------------------------------------------------------------------
+code_change(_OldVsn, State, _Extra) ->
+    {ok, State}.
+
+%%--------------------------------------------------------------------
+%%% Internal functions
+%%--------------------------------------------------------------------
+
+
+
+%% end $Id: erlview.erl,v 1.32 2009/02/16 03:59:18 mmcdanie Exp mmcdanie $
+
+@
+
+
+1.32
+log
+@*** empty log message ***
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.31 2009/02/16 03:52:40 mmcdanie Exp mmcdanie $
+d39 3
+d461 1
+a461 1
+io:fwrite("~n~n===> INIT~n~n",[]) ,
+d496 1
+a496 1
+io:fwrite("~n~n===> _Data: ~p~n~n", [_Data]) ,
+d661 1
+a661 1
+%% end $Id: erlview.erl,v 1.31 2009/02/16 03:52:40 mmcdanie Exp mmcdanie $
+@
+
+
+1.31
+log
+@*** empty log message ***
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.30 2009/02/15 18:03:25 mmcdanie Exp mmcdanie $
+d39 3
+d43 4
+a46 3
+%% just worked correctly with entire_doc( ... who/when/what/note ... ) and name/view matched
+%% fine.  Using Fcrypt key in handle_call( {map_doc ...) and dropped ordered_set option when
+%% creating both ets tables (cdb_table and erlview_queue)
+d49 7
+a55 6
+%% added a queue table for, I think, preventing multiple concurrent views from running
+%% every map fun again; i.e. when a new handle_call( {map_fun ...) is called, it checks
+%% if the queue table is empty and if so, populates it with all map funs stored in the
+%% cdb_table and then removes each fun (not quite implemented) as it runs it; contrary,
+%% if a new handle_call( {map_fun ...) is called and the table is not empty, it uses
+%% the map funs in the queue table
+d60 1
+a60 13
+%% Revision 1.28  2009/02/15 15:35:48  mmcdanie
+%% made some handle_call {map_fun ... ) changes. Dropped the try/catch and made it a case.
+%% changed handle_call {add_fun ... ) also, changed the key to be increasing gregorian seconds
+%% (and in init the ets table gets created ordered_set
+%% This did not help the name/view ordering!  Things still run and bad eval or runtime
+%% problems are caught, but the name/view ordering still gets messed up for three or
+%% maybe four or more map funs added.
+%%
+%% Revision 1.27  2009/02/15 08:31:19  mmcdanie
+%% changed {} to [] for Fields = ;  in case a key isn't found (with {} it runtime errored)
+%%  Name/view results are good for first, second, and third map fun saves.  Then when I save
+%%  the fourth map fun, the second and fourth are reversed with first and third ok.  This
+%%  was all tested using entire_doc/2
+a80 3
+%% Revision 1.24  2009/02/15 02:02:43  mmcdanie
+%% checkpoint
+%%
+a85 35
+%% Revision 1.22  2009/02/14 05:42:27  mmcdanie
+%% checkpoint (added documentation)
+%%
+%% Revision 1.21  2009/02/14 05:08:40  mmcdanie
+%% one_field works and entire_doc works and xemit works.  However, it seems that each of them
+%% will only work if I remove all views (rm .../.test_design/erl.view) and restart and then
+%% run a map fun with *that* helper.  Then if I try map fun w/diff helper it doesn't work.
+%% I am convinced it is still something to do with my add_fun save/recall logic (and related
+%% the earlier problem of the view names mixing up their view outputs when I *could* get
+%% multiple views to save (though I don't remember now if the saving of multiple views
+%% was using different helper funs also).
+%%
+%% Revision 1.20  2009/02/14 04:57:06  mmcdanie
+%% one_field and xemit work now. problem was I had added an ets:match_delete in
+%% handle_call( {map_fun ... )
+%%
+%% Revision 1.19  2009/02/14 04:20:47  mmcdanie
+%% xemit isn't working in this version though the identical xemit works in v1.16 WTF OVER?!?
+%%
+%% Revision 1.18  2009/02/13 20:59:57  mmcdanie
+%% *** empty log message ***
+%%
+%% Revision 1.17  2009/02/11 06:47:21  mmcdanie
+%% testing xemitx/2 is kind of working.  Takes as args the Doc, and a tuple consisting of
+%% Key_pairs list and Output_fields list.  If every Key_pair matches *some* field in the
+%% document then the output fields are displayed.  Works "kind of" as in first time from
+%% a temporary view a fun like this will work
+%% fun(Doc) ->
+%%    erlview:xemitx(Doc,
+%%                  { [{<<"who">>,<<"pooh">>}],
+%%                  [ <<"myid">>, <<"who">>, <<"when">> ]
+%%                  } )
+%% end.
+%% returns all "pooh" records.  The Key_pairs list has been tested w/two key pairs and works also.
+%% But only first time.  Then q(). and restart couchdb -i
+d88 3
+a90 2
+%% hurray!  I can now return a subset of documents.  Change was in xemit (of course) and
+%% the "not found" return value is the entire document without the Key
+a95 5
+%% Revision 1.14  2009/02/09 22:09:26  mmcdanie
+%% see xemit/2 ; it works with the current fixed output format (and fixed fields);
+%% next, generalize so it works with arbitrary {Key, List} input (List == list of fields to
+%%  display in output)
+%%
+d98 2
+a99 14
+%% need to fully qualify xemit, and note that the name emit causes failure (apparently
+%% reserved somehow).
+%% Next is to expand xemit to something like the jsscript emit(doc.name, [doc.name, doc.where])
+%%
+%% Revision 1.12  2009/02/09 02:27:10  mmcdanie
+%% worked for saving one, then a second erlang custom query; search on m3m for more info
+%%
+%% Revision 1.11  2009/02/08 20:16:23  mmcdanie
+%% checkpoint; not working though all 7 eunit tests run successfully
+%%
+%% Revision 1.10  2009/02/06 16:55:50  mmcdanie
+%% works when saving for the first time a valid fun, or running the valid fun.  NOTE that the
+%% output of handle_call( {map_doc ...  )  is fixed output right now which is
+%% probably why only first save works (buy there may be other probs).
+a100 2
+%% Revision 1.9  2009/02/06 16:39:59  mmcdanie
+%% no output to Futon but no errors, either, when running or saving a valid fun
+a101 3
+%% Revision 1.8  2009/02/06 15:12:05  mmcdanie
+%% checkpoint
+%% ...
+d106 3
+a108 1
+%% works with proper stored function (only tested with a single function and three documents)
+a109 3
+%% Revision 1.2  2009/01/31 17:04:08  mmcdanie
+%% checkpoint ; though now the ets table is getting populated via add_fun before handle_call
+%% is called
+d131 1
+a131 1
+%%  8) Add search for any doc field (on top of body fields)
+d137 1
+d658 1
+a658 1
+%% end $Id: erlview.erl,v 1.30 2009/02/15 18:03:25 mmcdanie Exp mmcdanie $
+@
+
+
+1.30
+log
+@just worked correctly with entire_doc( ... who/when/what/note ... ) and name/view matched
+fine.  Using Fcrypt key in handle_call( {map_doc ...) and dropped ordered_set option when
+creating both ets tables (cdb_table and erlview_queue)
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.29 2009/02/15 17:27:45 mmcdanie Exp mmcdanie $
+d24 1
+d39 5
+d182 1
+a227 1
+%%
+d305 2
+a306 1
+%% fields "who", "when", and "what" from those documents.
+d417 2
+a418 1
+%% If all Keys are found in Doc, returns Out_fields
+d420 1
+a420 1
+%% @@spec find_all_fields( Doc::doc(), { Keys::fields(), [Out_fields::fields()] } ) -> doc()
+d646 13
+d724 1
+a724 1
+%% end $Id: erlview.erl,v 1.29 2009/02/15 17:27:45 mmcdanie Exp mmcdanie $
+@
+
+
+1.29
+log
+@added a queue table for, I think, preventing multiple concurrent views from running
+every map fun again; i.e. when a new handle_call( {map_fun ...) is called, it checks
+if the queue table is empty and if so, populates it with all map funs stored in the
+cdb_table and then removes each fun (not quite implemented) as it runs it; contrary,
+if a new handle_call( {map_fun ...) is called and the table is not empty, it uses
+the map funs in the queue table
+Currently, as long as each map fun is entered correct (in Futon) then everything
+runs; still have name/view mixup (??!!??$#%!!!), and need to check for bad eval
+and runtime errors.
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.28 2009/02/15 15:35:48 mmcdanie Exp mmcdanie $
+d38 11
+d517 4
+a520 2
+    ets:new(?FUNTABLE, [public, named_table, ordered_set]) ,
+    ets:new(?QTABLE, [public, named_table, ordered_set]) ,
+d599 2
+a600 2
+  		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
+  		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
+d602 15
+a616 2
+%%  		      Key =calendar:datetime_to_gregorian_seconds({date(),time()}) ,
+%%  		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun)}) 
+a634 4
+% put the queue in w/thought that if two concurrent views are running, all the
+% map funs don't get called by all views but the queue thing seems to be
+% messing up other bits like when the third or fourth map fun is entered
+% and has a runtime error then there's not output at all even after fixing it
+a635 3
+%%     Tbl = ets:match(?FUNTABLE, '$1') ,
+%%     List_of_funs = lists:map( fun(F) -> F end, Tbl ) ,
+
+d703 1
+a703 1
+%% end $Id: erlview.erl,v 1.28 2009/02/15 15:35:48 mmcdanie Exp mmcdanie $
+@
+
+
+1.28
+log
+@made some handle_call {map_fun ... ) changes. Dropped the try/catch and made it a case.
+changed handle_call {add_fun ... ) also, changed the key to be increasing gregorian seconds
+(and in init the ets table gets created ordered_set
+This did not help the name/view ordering!  Things still run and bad eval or runtime
+problems are caught, but the name/view ordering still gets messed up for three or
+maybe four or more map funs added.
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.27 2009/02/15 08:31:19 mmcdanie Exp mmcdanie $
+d38 8
+d223 1
+d505 1
+d507 2
+d536 2
+a537 2
+handle_call({prompt, [ H | T ] = _Data}, _From, _State) ->
+    ?LOG([{?MODULE, prompt, _Data}, _From, _State]) ,
+d540 3
+a542 3
+	<<"add_fun">> -> handle_call( {add_fun, T}, x,y )  ;
+	<<"map_doc">> -> handle_call( {map_doc, hd(T)}, z,q ) ;
+	<<"reset">>   -> handle_call( {reset, x}, y,z )
+d554 2
+a555 2
+handle_call({reset, _Data}, _From, _State) ->
+    ?LOG([{reset, _Data}, _From, _State]) ,
+d561 2
+a562 2
+handle_call( {add_fun, BinFunctions}, _From, _State ) ->
+    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
+d609 20
+a628 6
+handle_call({map_doc, Doc} , _From , _State) ->
+    Tbl = ets:match(?FUNTABLE, '$1') ,
+    List_of_funs = lists:map( fun(F) -> F end, Tbl ) ,
+
+    L = lists:map( fun(Fa) -> G = binary_to_term( element(2, hd(Fa))) , 
+			      case  (catch G(Doc))
+d630 2
+a631 4
+			      Gx              -> Gx
+%%  			      catch _:_       -> exit(runtime_error_map_fun) 
+%% 			      catch _:_       -> % ets:match_delete(?FUNTABLE, Fa), 
+%% 					         Gx = {error, runtime_error_map_fun}
+d634 2
+a635 1
+ 		   List_of_funs ) ,
+d684 1
+a684 1
+%% end $Id: erlview.erl,v 1.27 2009/02/15 08:31:19 mmcdanie Exp mmcdanie $
+@
+
+
+1.27
+log
+@changed {} to [] for Fields = ;  in case a key isn't found (with {} it runtime errored)
+ Name/view results are good for first, second, and third map fun saves.  Then when I save
+ the fourth map fun, the second and fourth are reversed with first and third ok.  This
+ was all tested using entire_doc/2
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.26 2009/02/15 07:51:17 mmcdanie Exp mmcdanie $
+d38 6
+d496 1
+a496 1
+    ets:new(?FUNTABLE, [public,named_table]) ,
+d574 5
+a578 2
+		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
+		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
+d602 1
+a602 1
+			      try  (catch G(Doc))
+d605 3
+a607 2
+			      catch _:_       -> % ets:match_delete(?FUNTABLE, Fa), 
+					         Gx = {error, runtime_error_map_fun}
+d610 1
+a610 1
+ 		   lists:reverse(List_of_funs) ) ,
+d659 1
+a659 1
+%% end $Id: erlview.erl,v 1.26 2009/02/15 07:51:17 mmcdanie Exp mmcdanie $
+@
+
+
+1.26
+log
+@works now and can correct bad map funs whether the problem is bad eval or runtime
+error; HOWEVER, the name/view relationship is still mixed up as after adding
+multiple names (at least, in Futon) when I call a view it is not the same as
+the name of the view (i.e. the output is for a different name).
+So, still don't know what's up with that but at least CDB doesn't need
+restarting now just because a bad map fun was entered (runtime error map fun).
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.25 2009/02/15 02:28:35 mmcdanie Exp mmcdanie $
+d38 8
+d166 2
+a167 1
+%%  8)
+d323 1
+a323 1
+				       _          -> {}   % []
+d398 1
+a398 1
+				    _          -> {}   % []
+d453 1
+a453 1
+	    of false          -> Vk = <<"null">>, {}  ;  % [] ;
+d595 3
+a597 3
+			      Gx        -> io:fwrite("~n~n~nGx: ~p~n~n",[Gx]), Gx
+			      catch _:_ -> ets:match_delete(?FUNTABLE, Fa), 
+					   Gx = {error, runtime_error_map_fun}
+d600 1
+a600 1
+ 		   List_of_funs ) ,
+d649 1
+a649 1
+%% end $Id: erlview.erl,v 1.25 2009/02/15 02:28:35 mmcdanie Exp mmcdanie $
+@
+
+
+1.25
+log
+@seems to work, i.e. each implemented map fun helper.  Though the name/view still
+gets mixed up and a bad view can spoil the bunch.  I think that if a map fun
+has a runtime failure, that's what messes everything up.  Maybe figure out
+how to catch the runtime failure and remove that view from ets.  Because,
+it's stuck there when the view is resaved (because the key in ets is
+a crypt of the fun).  Hmm, if I can figure out how to capture the name under
+which the map fun is saved then this might not be a problem (i.e. overwrite
+the runtime erroring fun).  That can't be that hard, can it? Finding out
+the name under which a map fun is saved?
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.24 2009/02/15 02:02:43 mmcdanie Exp mmcdanie $
+d28 1
+a28 1
+%% @@type key_pairs(). List of {field, content} where field::binary(), content::binary() and describe document field names or field contents.
+d30 1
+a30 3
+%% @@type out_fields(). List of field names where field::binary() and describes a document field name.
+%%
+%% @@type keys().  List of  field names where field::binary() and describes a document field name.
+d38 11
+d251 1
+a251 1
+%%                            Out_fields::out_fields() } ) -> doc()
+d283 1
+a283 1
+%%                      Out_fields::out_fields() } ) -> doc()
+d352 1
+a352 1
+%% @@spec find_any_fields( Doc::doc(), { Key::keys(), [Out_fields::out_fields()] } ) -> doc()
+d377 1
+a377 1
+%% @@spec find_all_fields( Doc::doc(), { Key::keys(), [Out_fields::out_fields()] } ) -> doc()
+d511 1
+d581 1
+a581 1
+    List_of_funs = lists:map( fun(F) -> element(2,hd(F)) end, Tbl ) ,
+d583 7
+a589 1
+    L = lists:map( fun(Fa) -> G = binary_to_term(Fa) , G(Doc)
+d591 1
+a591 1
+		   List_of_funs ) ,
+d640 1
+a640 1
+%% end $Id: erlview.erl,v 1.24 2009/02/15 02:02:43 mmcdanie Exp mmcdanie $
+@
+
+
+1.24
+log
+@checkpoint
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.23 2009/02/14 17:10:57 mmcdanie Exp mmcdanie $
+d40 3
+d137 4
+a140 3
+%%  2) make some helper funs for writing views ala jsscript emit(null, doc.name)
+%%  3) when I save two views in Futon, the wrong one runs for the name (i.e.
+%%     they're swapped); s'up with that?  I'm guessing something about how
+d143 6
+a148 3
+%%  5)
+%%  6)
+%%  7)
+d155 2
+a156 2
+%% in /usr/local/etc/couchdb/local.ini 
+%% I have the following (not as comments, of course)
+d171 2
+a172 2
+%% if a reset is needed this will work ... 
+%% curl  -X POST --header "Content-Type: application/erlang"  \
+d175 2
+a176 1
+%%
+d227 1
+a227 1
+%% Used in map funs, finds documents having any of the requested content. NOT IMPLEMENTED
+d333 1
+a333 1
+%% Used in map funs, finds documents having any of the requested fields. 
+d356 4
+a359 3
+%% used thusly from map funs ...
+%%
+%% fun(Doc) -> erlview:find_all_fields( Doc, { &lt;&lt;"who"&gt;&gt;, 
+d364 1
+d419 1
+a419 1
+% Used in map funs, finds documents containing requested field.
+d536 1
+a536 1
+
+d554 1
+a554 1
+		     {error, R}  -> R#response.ets_fail
+d556 1
+a556 1
+		  catch _:_ ->
+d560 4
+a563 1
+		  end end, "", BinFunctions ) ,
+d624 1
+a624 1
+%% end $Id: erlview.erl,v 1.23 2009/02/14 17:10:57 mmcdanie Exp mmcdanie $
+@
+
+
+1.23
+log
+@each helper fun seems to work ok in a map fun, but only the first time
+(unless I save a view); something is still messed up w/saving & recovering
+funs
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.22 2009/02/14 05:42:27 mmcdanie Exp mmcdanie $
+d24 10
+d40 5
+d138 1
+a138 1
+%%  4) rewrite one_field to be all_fields
+d190 2
+a191 1
+-export([all_content/2, any_content/2, all_fields/2, entire_doc/2]).
+d219 1
+a219 3
+%% Helper fun, used in map funs. 
+%%
+%% any_content IS NOT YET WRITTEN
+d223 1
+a223 1
+%% fun(Doc) -> erlview:all_content(Doc,
+d233 2
+a234 2
+%% any_content( Doc::doc(), {Key_pairs::list(tuples()), 
+%%                           Output_fields_list::list(tuples())} ) -> doc()
+d236 1
+a236 1
+any_content( _Doc, {_Key_pairs, _Output_fields_list} ) -> 
+d243 1
+a243 1
+%% Helper fun, used in map funs.
+d246 2
+a247 1
+%% "who" field, but only fields "myid", "who", "when" from those documents.
+d249 1
+d251 9
+a259 4
+%%    erlview:all_content(Doc,
+%%                  { [{&lt;&lt;"who"&gt;&gt;, &lt;&lt;"pooh"&gt;&gt;}],
+%%                  [ &lt;&lt;"myid"&gt;&gt;, &lt;&lt;"who"&gt;&gt;, &lt;&lt;"when"&gt;&gt; ]
+%%                  } )
+d261 1
+a262 2
+%% The Key_pairs tuples are {field, content} tuples of binaries.
+%% The Output_fields_list are lists of document fields (binaries)
+d264 3
+a266 3
+%% @@spec all_content( Doc::doc(), 
+%%                    {Key_pairs::[tuple()], 
+%%                     Output_fields_list::[binary()]} ) -> doc()
+d269 1
+a269 1
+all_content( Doc, {Key_pairs, Output_fields_list} ) ->  % all must match
+d271 1
+a271 1
+?LOG( [{Body, {Key_pairs, Output_fields_list}}] ) ,
+d297 1
+a297 1
+				       _          -> []
+d300 1
+a300 1
+			   Output_fields_list ) 
+d313 4
+d318 2
+a319 1
+. % all_content/2 (formerly xemitx/2)
+d324 2
+a325 2
+%% any_fields( Doc, {Keys, Output_fields_list} ) ->
+%%  any_ needs writing
+d327 14
+d344 3
+a346 2
+% % @@doc
+%% Helper fun, used in map funs.
+d350 1
+a350 1
+%% fun(Doc) -> erlview:all_fields( Doc, { [ &lt;&lt;"who"&gt;&gt; ], 
+d356 1
+a356 1
+%% If all Keys (document field names) are found in Doc, returns Output_fields.
+d358 4
+a361 29
+% % @@spec all_fields( Doc::doc(), { [Keys], [Output_fields_list] } ) -> doc()
+% % @@end
+%% all_fields( Doc, {Keys, Output_fields_list} ) ->
+%%     case lists:flatlength( Keys )
+%% 	of 1 -> one_field( Doc, {hd(Keys), Output_fields_list} ) ;
+%% 	_    -> something_else
+%%     end
+%% .
+
+
+
+% @@doc
+% Helper fun, used in map funs.
+%
+% @@deprecated use all_fields
+%
+% used thusly from map funs ...
+%
+% fun(Doc) -> erlview:all_fields( Doc, { &lt;&lt;"who"&gt;&gt;, 
+%                                       [&lt;&lt;"who"&gt;&gt;,
+%                                        &lt;&lt;"what"&gt;&gt;,
+%                                        &lt;&lt;"when"&gt;&gt;] } )
+% end.
+%
+% If Key (a document field name) is found in Doc, returns Output fields
+%
+% @@spec all_fields( Doc::doc(), { Key::binary(), [Output_fields_list::binary()] } ) -> doc()
+% @@end
+all_fields( Doc, {Keys, Output_fields_list} ) ->
+d363 1
+a363 1
+?LOG( [{Body, {Keys, Output_fields_list}}] ) ,
+d366 8
+a373 13
+Vk = hd(Keys) ,
+    Fields =
+%% 	case lists:keysearch(Key, 1, Eb) 
+%% 	    of false          -> Vk = <<"null">>, [] ;
+%% 	    {value, {Key,Vk}} -> 
+		lists:map( fun(K) -> 
+				   case lists:keysearch(K, 1, Eb) of
+				       {value, V} -> V ;
+				       _          -> {}   % []
+				   end
+			   end,
+			   Output_fields_list ) ,
+%% 	end ,
+d391 10
+d402 2
+a404 16
+     case (lists:flatlength(Fields) > 0) and Match
+	      of true ->
+		 Out = [{ Vk, {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Fields } }] ;
+	      _       -> 
+		 Out = [{     {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Body } }]
+	  end , 
+
+io:fwrite("~n~n===> Vk: ~p~nFields: ~p~nTruth_list: ~p~nMatch: ~p~nOut: ~p~n~n",
+[Vk, Fields, Truth_list, Match, Out]) ,
+
+    Out
+. % one_field/2
+d409 1
+a409 1
+% Helper fun, used in map funs.
+d415 1
+a415 1
+% If Key (a document field name) is found in Doc, returns entire doc.
+d417 1
+a417 1
+% @@spec entire_doc( Doc::doc(), {Key::binary(), all} ) -> doc()
+d425 1
+a425 1
+	    of false          -> Vk = <<"null">>, [] ;
+a444 7
+
+
+
+
+
+
+
+d483 2
+a484 2
+% hd(IN) is the Data in  couch_os_process:prompt(Pid, Data)
+% called from couch_query_servers
+d486 4
+a489 3
+%%  IN: [<<"add_fun">>,<<"function(doc) {\n  emit(null, doc);\n}">>]
+%% OUT: true
+%% H::binary(), T::doc()
+d491 5
+a495 5
+%%     ?LOG([{?MODULE, prompt, _Data}, _From, _State]) ,
+     case H of
+  	  <<"add_fun">> -> handle_call( {add_fun, T}, x,y ) 
+  	; <<"map_doc">> -> handle_call( {map_doc, hd(T)}, z,q )
+  	; <<"reset">>   -> handle_call( {reset, x}, y,z )
+d499 1
+a499 1
+%% apparently you cannot "layer" gen_server:calls as below,
+d521 3
+a523 16
+%%Bin = <<"fun(Docs) -> [lists:keysearch(<<\"what\">>, 1, X) || X <- Docs] end.">>.
+%% FunStr = binary_to_list( Bin ).
+%% {ok, Tokens, _} = erl_scan:string(FunStr).
+%% {ok, [Form]} = erl_parse:parse_exprs(Tokens).
+%% Bindings = erl_eval:new_bindings().
+%% {value, Fun, _} = erl_eval:expr(Form, Bindings).
+%% 118> Fun.
+%% #Fun<erl_eval.6.13229925>
+%% 119> Fun( [{<<"who">>, scooby}, {<<"what">>, doo}] ).
+%% ** exception error: bad argument
+%%      in function  lists:keysearch/3
+%%         called as lists:keysearch(<<"what">>,1,{<<"who">>,scooby})
+%% 
+%% NOTE that the fun evaluated as valid but has runtime error.  So,
+%%      it is probably worthwhile to put some good feedback in to the
+%%      Erlang funs so when they fail I can figure out why.
+a557 1
+%%     ets:match_delete(?FUNTABLE, '$1') ,
+d562 1
+a562 1
+		   List_of_funs )
+d564 1
+a564 1
+	, {reply, L, #state{fun_was="map_doc"}}
+d611 1
+a611 1
+%% end $Id: erlview.erl,v 1.22 2009/02/14 05:42:27 mmcdanie Exp mmcdanie $
+@
+
+
+1.22
+log
+@checkpoint (added documentation)
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.21 2009/02/14 05:08:40 mmcdanie Exp mmcdanie $
+d30 3
+d175 1
+a175 1
+-export([all_content/2, all_fields/2, one_field/2, entire_doc/2]).
+d198 8
+d207 2
+a208 7
+% Helper fun, used in map funs. 
+%
+% any_content( Doc::doc(), {Key_pairs::list(tuples()), Output_fields_list::list(tuples())} ) -> doc() (kind of)
+%   any_ needs writing
+
+%  returns docs containing a foo of "new", and myid of "123"
+% and returns fields myid,who,when
+d210 5
+a214 2
+%%                          {[ {<<"foo">>, <<"new">>}, {<<"myid">>, <"123">>} ] 
+%%                           [ <<"myid">>, <<"who">>, <<"when">> ] 
+a216 4
+%
+% xemit( Doc, { [ {field_name, value}, {field_name, value}, ... ], 
+%               [ field_to_display, field_to_display, ... ] | [ all ]
+%             }
+d218 7
+a224 1
+%
+d228 21
+a248 23
+% 
+
+% @@doc
+% Helper fun, used in map funs.
+%
+%
+% The following map fun would return all documents which contain "pooh" in the 
+% "who" field, but only fields "myid", "who", "when" from those documents.
+%
+% fun(Doc) ->
+%    erlview:all_content(Doc,
+%                  { [{&lt;&lt;"who"&gt;&gt;, &lt;&lt;"pooh"&gt;&gt;}],
+%                  [ &lt;&lt;"myid"&gt;&gt;, &lt;&lt;"who"&gt;&gt;, &lt;&lt;"when"&gt;&gt; ]
+%                  } )
+% end.
+%
+% The Key_pairs tuples are {field, content} tuples of binaries.
+% The Output_fields_list are lists of document fields (binaries)
+%
+% @@spec all_content( Doc::doc(), {Key_pairs::[tuple()], Output_fields_list::[binary()]} ) -> doc()
+
+% 
+% @@end
+d262 4
+a265 1
+    Match = case  lists:all( fun(T) -> lists:member(true,T) end, Truth_list )
+d283 10
+a292 10
+    case (lists:flatlength(Display_Fields) > 0) and Match
+	of true ->
+	    Out = [{ Vk, {[{<<"_id">>,Id}] 
+			    ++ [{<<"_rev">>,hd(Revs)}] 
+			    ++ Display_Fields } }] ;
+	_       -> 
+	    Out = [{     {[{<<"_id">>,Id}] 
+			    ++ [{<<"_rev">>,hd(Revs)}] 
+			    ++ Body } }]
+    end ,
+d300 17
+a316 1
+%  any_ needs writing
+d318 10
+d332 2
+d336 1
+a336 1
+% fun(Doc) -> erlview:all_fields( Doc, { [ &lt;&lt;"who"&gt;&gt; ], 
+d342 1
+a342 1
+% If all Keys (document field names) are found in Doc, returns Output_fields.
+d344 1
+a344 1
+% @@spec all_fields( Doc::doc(), { [Keys], [Output_fields_list] } ) -> doc()
+d347 52
+a398 5
+    case lists:flatlength( Keys )
+	of 1 -> one_field( Doc, {hd(Keys), Output_fields_list} ) ;
+	_    -> something_else
+    end
+.
+a439 3
+xemit( Doc, {Key, Output_fields_list} ) ->
+    #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
+?LOG( [{Body, {Key, Output_fields_list}}] ) ,
+a440 17
+%%     Fields = element(1, Body) ,  % [ tuple, tuple, ... ]
+%% simple return of the entire document
+%% ===> xemit Fields: [{<<"myid">>,<<"123">>},
+%%                     {<<"who">>,<<"pooh">>},
+%%                     {<<"what">>,<<"carrots">>},
+%%                     {<<"when">>,<<"2009/01/18 01:57">>},
+%%                     {<<"note">>,<<"ya ya ya">>}]
+
+%% Fields =  [  {<<"who">>,<<"pooh">>},
+%%              {<<"what">>,<<"carrots">>},
+%%              {<<"when">>,<<"2009/01/18 01:57">>}
+%% 	  ] ,
+%% io:fwrite("~n~n===> xemit Fields: ~p~n~n", [Fields]) ,
+%%     Out = [{ <<"pooh">>, [{[{<<"_id">>,Id}] 
+%% 	      ++ [{<<"_rev">>,hd(Revs)}] 
+%% 	      ++ Fields }] }] ,
+%% io:fwrite("~n~n===> xemit Out: ~p~n~n", [Out]) 
+a442 88
+Eb = element(1, Body) ,
+Fields =
+	case lists:keysearch(Key, 1, Eb) 
+	    of false          -> Vk = <<"null">>, [] ;
+	    {value, {Key,Vk}} -> 
+		lists:map( fun(K) -> 
+				   case lists:keysearch(K, 1, Eb) of
+				       {value, V} -> V ;
+				       _          -> []
+				   end
+			   end,
+			   Output_fields_list )
+	end ,
+
+ io:fwrite("~n~n===> xemit Fields: ~p~n~n", [Fields]) ,    
+
+    case lists:flatlength(Fields) > 0
+	of true ->
+	    Out = [{ Vk,  {[{<<"_id">>,Id}] 
+			    ++ [{<<"_rev">>,hd(Revs)}] 
+			    ++ Fields} }] ;
+	_       -> 
+	    Out = [{      {[{<<"_id">>,Id}] 
+			    ++ [{<<"_rev">>,hd(Revs)}] 
+			    ++ Body } }]
+    end 
+%% fun(Doc) ->
+%% erlview:xemit(Doc,
+%% { <<"who">>, 
+%%   [ <<"who">>, <<"what">>, <<"when">> ] 
+%% } )
+%% end.
+, io:fwrite("~n~n===> xemit Out: ~p~n~n", [Out]) 
+
+	, Out
+. % xemit/2
+
+
+
+% @@doc
+% Helper fun, used in map funs.
+%
+% @@deprecated use all_fields
+%
+% used thusly from map funs ...
+%
+% fun(Doc) -> erlview:one_field( Doc, { &lt;&lt;"who"&gt;&gt;, 
+%                                       [&lt;&lt;"who"&gt;&gt;,
+%                                        &lt;&lt;"what"&gt;&gt;,
+%                                        &lt;&lt;"when"&gt;&gt;] } )
+% end.
+%
+% If Key (a document field name) is found in Doc, returns Output fields
+%
+% @@spec one_field( Doc::doc(), { Key::binary(), [Output_fields_list::binary()] } ) -> doc()
+% @@end
+
+one_field( Doc, {Key, Output_fields_list} ) ->
+    #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
+?LOG( [{Body, {Key, Output_fields_list}}] ) ,
+
+    Eb = element(1, Body) ,
+    Fields =
+	case lists:keysearch(Key, 1, Eb) 
+	    of false          -> Vk = <<"null">>, [] ;
+	    {value, {Key,Vk}} -> 
+		lists:map( fun(K) -> 
+				   case lists:keysearch(K, 1, Eb) of
+				       {value, V} -> V ;
+				       _          -> []
+				   end
+			   end,
+			   Output_fields_list )
+	end ,
+
+     case lists:flatlength(Fields) > 0
+	      of true ->
+		 Out = [{ Vk, {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Fields } }] ;
+	      _       -> 
+		 Out = [{     {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Body } }]
+	  end , 
+
+    Out
+. % one_field/2
+d625 1
+a625 1
+%% end $Id: erlview.erl,v 1.21 2009/02/14 05:08:40 mmcdanie Exp mmcdanie $
+@
+
+
+1.21
+log
+@one_field works and entire_doc works and xemit works.  However, it seems that each of them
+will only work if I remove all views (rm .../.test_design/erl.view) and restart and then
+run a map fun with *that* helper.  Then if I try map fun w/diff helper it doesn't work.
+I am convinced it is still something to do with my add_fun save/recall logic (and related
+the earlier problem of the view names mixing up their view outputs when I *could* get
+multiple views to save (though I don't remember now if the saving of multiple views
+was using different helper funs also).
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.20 2009/02/14 04:57:06 mmcdanie Exp mmcdanie $
+d30 9
+d168 1
+a168 1
+-compile(export_all).  %% TESTING ONLY
+d172 1
+a172 1
+%%-export([all_content/2, all_fields/2, one_field/2, entire_doc/2]).
+a216 2
+% The following map fun would return all documents which contain "pooh" in the 
+% "who" field, but only fields "myid", "who", "when" from those documents.
+a217 6
+%% fun(Doc) ->
+%%    erlview:all_content(Doc,
+%%                  { [{<<"who">>),<<"pooh">>}],
+%%                  [ <<"myid">>, <<"who">>, <<"when">> ]
+%%                  } )
+%% end.
+d222 11
+d235 1
+d294 8
+d304 1
+a304 3
+% all_fields( Doc::doc(), 
+%             {Keys::list()), 
+%             Output_fields_list::list(tuples())} ) -> doc() (kind of)
+d312 3
+d317 5
+d323 3
+a325 1
+% entire_doc( Doc::doc(), {Key::binary(), all} )
+a326 3
+%% fun(Doc) -> erlview:entire_doc( Doc,
+%% { <<"who">>, all } )
+%% end.
+d413 2
+d416 13
+a428 1
+% Helper fun, used in map funs. 
+a430 1
+%
+d432 1
+a432 3
+%% fun(Doc) -> erlview:one_field( Doc,
+%% { <<"who">>, [<<"who">>,<<"what">>,<<"when">>] } )
+%% end.
+d646 1
+a646 1
+%% end $Id: erlview.erl,v 1.20 2009/02/14 04:57:06 mmcdanie Exp mmcdanie $
+@
+
+
+1.20
+log
+@one_field and xemit work now. problem was I had added an ets:match_delete in
+handle_call( {map_fun ... )
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.19 2009/02/14 04:20:47 mmcdanie Exp mmcdanie $
+d30 4
+d298 3
+d314 1
+a314 1
+			  ++ Body } }] ;
+d318 1
+a318 1
+			  ++ Body } }]
+d393 3
+d609 1
+a609 1
+%% end $Id: erlview.erl,v 1.19 2009/02/14 04:20:47 mmcdanie Exp mmcdanie $
+@
+
+
+1.19
+log
+@xemit isn't working in this version though the identical xemit works in v1.16 WTF OVER?!?
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.18 2009/02/13 20:59:57 mmcdanie Exp mmcdanie $
+d30 3
+d545 1
+a545 1
+    ets:match_delete(?FUNTABLE, '$1') ,
+d599 1
+a599 1
+%% end $Id: erlview.erl,v 1.18 2009/02/13 20:59:57 mmcdanie Exp mmcdanie $
+@
+
+
+1.18
+log
+@*** empty log message ***
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.17 2009/02/11 06:47:21 mmcdanie Exp mmcdanie $
+d30 3
+d152 1
+a152 1
+%% -compile(export_all).  %% TESTING ONLY
+d156 1
+a156 1
+-export([all_content/2, all_fields/2, one_field/2, entire_doc/2]).
+d214 4
+a217 2
+% all_content( Doc::doc(), {Key_pairs::list(tuples()), Output_fields_list::list(tuples())} )
+%
+d315 68
+d401 1
+a401 1
+    Out = case lists:flatlength(Fields) > 0
+d403 1
+a403 1
+		  [{ Vk, {[{<<"_id">>,Id}] 
+d407 1
+a407 1
+		  [{     {[{<<"_id">>,Id}] 
+d596 1
+a596 1
+%% end $Id: erlview.erl,v 1.17 2009/02/11 06:47:21 mmcdanie Exp mmcdanie $
+@
+
+
+1.17
+log
+@testing xemitx/2 is kind of working.  Takes as args the Doc, and a tuple consisting of
+Key_pairs list and Output_fields list.  If every Key_pair matches *some* field in the
+document then the output fields are displayed.  Works "kind of" as in first time from
+a temporary view a fun like this will work
+fun(Doc) ->
+   erlview:xemitx(Doc,
+                 { [{<<"who">>,<<"pooh">>}],
+                 [ <<"myid">>, <<"who">>, <<"when">> ]
+                 } )
+end.
+returns all "pooh" records.  The Key_pairs list has been tested w/two key pairs and works also.
+But only first time.  Then q(). and restart couchdb -i
+@
+text
+@d2 24
+a25 2
+%%% File    : $Id: erlview.erl,v 1.16 2009/02/11 02:56:03 mmcdanie Exp mmcdanie $
+%%% Author  : mmcdanie <>
+a26 1
+%%%curl  -X POST --header "Content-Type: application/erlang"   http://192.168.1.7:5984/daptest/_slow_view/reset
+d30 14
+d94 1
+a94 1
+%%  1) in handle_call( {map_doc ... ) figure out what consitutes null for a 
+d96 1
+d101 1
+a101 1
+%%  4)
+d114 2
+a115 1
+%    erlang = erl -sname fubar -noshell -detached
+d127 3
+d144 1
+a144 1
+-define(SERVER, erlview).
+d149 2
+a150 1
+-compile(export_all).  %% TESTING ONLY
+d152 2
+d160 1
+a160 1
+-include("erlview_test.erl"). %has to be after -export/1
+d176 2
+d179 7
+a185 4
+% this map fun returns only docs containing a myid field of "123"
+% and only fields myid,who,when
+%% fun(Doc) -> erlview:xemit(Doc,
+%%                          {[ {<<"myid">>, <"123">>} ] 
+a188 17
+
+%%   if every tuple in Key_pairs matches *some* tuple in Body then
+%%   return fields_to_display
+%%  note can do direct tuple == tuple checks from each list
+
+%% Key_pairs = [{<<"who">>,<<"pooh">>},{<<"when">>,<<"2009">>}].
+%% Body      = [{<<"who">>,<<"pooh">>}, {<<"what">>,<<"foo">>},
+%% 	     {<<"when">>,<<"2009">>}].
+
+%% O = lists:map(fun(K) ->  lists:map( fun(Bt) -> K == Bt end, Body ) end, Key_pairs).
+%% [[true,false,false],[false,false,true]]
+
+%% case  lists:all( fun(T) -> lists:member(true,T) end, O )
+%% of true -> found_a_match ;
+%%   false -> no_match
+%% end
+
+d193 1
+a193 1
+%      )
+d195 15
+a209 2
+% xemit( Doc, { [{<<"who">>, <<"pooh">>}], [<<"who">>, <<"what">>, <<"when">>] } )
+% show records where who == pooh and return who,what,when fields
+d211 5
+a215 5
+% xemit( Doc, {Key_pairs_list, Output_fields_List} ) ->
+
+% xemit( Doc, { <<"who">>, [<<"who">>, <<"what">>, <<"when">>] } )
+% show records with field who and return who,what,when fields
+xemitx( Doc, {Key_pairs, Output_fields_list} ) ->
+a219 1
+
+a232 1
+
+a245 1
+
+d255 3
+a257 1
+    end 
+a258 2
+	, Out
+. % xemitx/2
+d262 49
+a310 1
+xemit( Doc, {Key, Output_fields_list} ) ->
+d328 10
+a337 10
+    case lists:flatlength(Fields) > 0
+	of true ->
+	    Out = [{ Vk, {[{<<"_id">>,Id}] 
+			    ++ [{<<"_rev">>,hd(Revs)}] 
+			    ++ Fields } }] ;
+	_       -> 
+	    Out = [{     {[{<<"_id">>,Id}] 
+			    ++ [{<<"_rev">>,hd(Revs)}] 
+			    ++ Body } }]
+    end 
+d339 2
+a340 2
+	, Out
+. % xemit/2
+d362 1
+a362 1
+    {ok, #state{st="init"}}
+d384 4
+a387 8
+%% %% 
+%% %%  IN: [<<"add_fun">>,<<"function(doc) {\n  emit(null, doc);\n}">>]
+%% %% OUT: true
+
+
+
+
+%% T::doc()
+d406 1
+a406 1
+%    ?LOG([{reset, _Data}, _From, _State]) ,
+d410 1
+a410 1
+    {reply, R#response.success, #state{st="reset"}}
+d413 1
+a413 1
+%     ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
+d463 1
+a463 1
+    {reply, Reply, #state{st="add_fun"}}
+d469 1
+d476 1
+a476 1
+	, {reply, L, #state{st="map_doc"}}
+d523 1
+a523 1
+%% end $Id: erlview.erl,v 1.16 2009/02/11 02:56:03 mmcdanie Exp mmcdanie $
+@
+
+
+1.16
+log
+@hurray!  I can now return a subset of documents.  Change was in xemit (of course) and
+the "not found" return value is the entire document without the Key
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.15 2009/02/10 06:24:12 mmcdanie Exp mmcdanie $
+d9 4
+a132 6
+%% [
+%% [ { <<"key">>, {[ tuple, tuple, ... ]} } ] ,
+%% [ { <<"key">>, {[ tuple, tuple, ... ]} } ] ,
+%% [{<<"pooh">>,[<<"pooh">>,<<"carrots">>]}],
+%% ...
+%% ]
+d134 29
+d171 50
+d225 2
+a226 21
+%%     Fields = element(1, Body) ,  % [ tuple, tuple, ... ]
+%% simple return of the entire document
+%% ===> xemit Fields: [{<<"myid">>,<<"123">>},
+%%                     {<<"who">>,<<"pooh">>},
+%%                     {<<"what">>,<<"carrots">>},
+%%                     {<<"when">>,<<"2009/01/18 01:57">>},
+%%                     {<<"note">>,<<"ya ya ya">>}]
+
+%% Fields =  [  {<<"who">>,<<"pooh">>},
+%%              {<<"what">>,<<"carrots">>},
+%%              {<<"when">>,<<"2009/01/18 01:57">>}
+%% 	  ] ,
+%% io:fwrite("~n~n===> xemit Fields: ~p~n~n", [Fields]) ,
+%%     Out = [{ <<"pooh">>, [{[{<<"_id">>,Id}] 
+%% 	      ++ [{<<"_rev">>,hd(Revs)}] 
+%% 	      ++ Fields }] }] ,
+%% io:fwrite("~n~n===> xemit Out: ~p~n~n", [Out]) 
+
+
+Eb = element(1, Body) ,
+Fields =
+a238 2
+ io:fwrite("~n~n===> xemit Fields: ~p~n~n", [Fields]) ,    
+
+d245 1
+a245 1
+	    Out = [{ {[{<<"_id">>,Id}] 
+a248 7
+%% fun(Doc) ->
+%% erlview:xemit(Doc,
+%% { <<"who">>, 
+%%   [ <<"who">>, <<"what">>, <<"when">> ] 
+%% } )
+%% end.
+, io:fwrite("~n~n===> xemit Out: ~p~n~n", [Out]) 
+d306 4
+a309 3
+  	<<"add_fun">> -> handle_call( {add_fun, T}, x,y ) ;
+  	<<"map_doc">> -> handle_call( {map_doc, hd(T)}, z,q )
+%%                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+d312 1
+a312 1
+%% apparently you cannot "layer" the gen_server:calls as below,
+d323 1
+d382 1
+a382 4
+handle_call({map_doc, #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc}
+	    , _From
+	    , _State) ->
+
+d437 1
+a437 1
+%% end $Id: erlview.erl,v 1.15 2009/02/10 06:24:12 mmcdanie Exp mmcdanie $
+@
+
+
+1.15
+log
+@xemit/2 now working for simple pattern; can't yet find a field content, only
+if the field exists
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.14 2009/02/09 22:09:26 mmcdanie Exp mmcdanie $
+d9 4
+d58 3
+a60 1
+%%  3)
+d189 3
+a191 1
+	    Out = []
+d300 2
+a305 1
+		  R = #response{} ,
+d389 1
+a389 1
+%% end $Id: erlview.erl,v 1.14 2009/02/09 22:09:26 mmcdanie Exp mmcdanie $
+@
+
+
+1.14
+log
+@see xemit/2 ; it works with the current fixed output format (and fixed fields);
+next, generalize so it works with arbitrary {Key, List} input (List == list of fields to
+ display in output)
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.13 2009/02/09 20:36:14 mmcdanie Exp mmcdanie $
+d9 5
+d129 10
+a138 1
+xemit( Doc, {Key, List} ) ->
+d140 1
+a142 2
+
+
+d150 9
+a158 6
+Fields =  [  {<<"who">>,<<"pooh">>},
+             {<<"what">>,<<"carrots">>},
+             {<<"when">>,<<"2009/01/18 01:57">>}
+	  ] ,
+
+io:fwrite("~n~n===> xemit Fields: ~p~n~n", [Fields]) ,
+d161 31
+a191 9
+    Out = [{ <<"pooh">>, [{[{<<"_id">>,Id}] 
+	      ++ [{<<"_rev">>,hd(Revs)}] 
+	      ++ Fields }] }] ,
+
+io:fwrite("~n~n===> xemit Out: ~p~n~n", [Out]) 
+
+%%     Out = [{ null, {[{<<"_id">>,Id}] 
+%% 	      ++ [{<<"_rev">>,hd(Revs)}] 
+%% 	      ++ Fields } }]
+d263 1
+a263 1
+%%     ?LOG([{reset, _Data}, _From, _State]) ,
+d268 2
+a269 2
+handle_call( {add_fun, BinFunctions}, _From, _State ) -> % true | false
+%%     ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
+d380 1
+a380 1
+%% end $Id: erlview.erl,v 1.13 2009/02/09 20:36:14 mmcdanie Exp mmcdanie $
+@
+
+
+1.13
+log
+@fun(Body) -> erlview:xemit(Body) end.  will now work.
+need to fully qualify xemit, and note that the name emit causes failure (apparently
+reserved somehow).
+Next is to expand xemit to something like the jsscript emit(doc.name, [doc.name, doc.where])
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.12 2009/02/09 02:27:10 mmcdanie Exp mmcdanie $
+d9 6
+d117 40
+a156 3
+xemit(Body) ->
+ Body
+. % emit/2
+d284 1
+a284 1
+handle_call({map_doc, #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta}=_Doc}
+d291 1
+a291 25
+    L = lists:map( fun(Fa) -> 
+			   G = binary_to_term(Fa) 
+			   ,X = G(Body)
+ 		           ,io:fwrite("XXXXXXXX: ~n~n~p~n~n", [X])
+ 			   , Y = element(1,X)
+  		           ,io:fwrite("YYYYYYYY: ~n~n~p~n~n", [Y])
+
+%% [
+%% [ { <<"key">>, {[ tuple, tuple, ... ]} } ] ,
+%% [ { <<"key">>, {[ tuple, tuple, ... ]} } ] ,
+%% [{<<"pooh">>,[<<"pooh">>,<<"carrots">>]}],
+%% ...
+%% ]
+
+
+%%m3m; it's not clear to me if I should have [ null  or [ { null
+%% in the next line; I guess [{ null ... }] is the ticket.  I just, in Futon,
+%% did design document -> delete document -> compact database -> custom query
+%% erlang, fun(Body) -> Body end.  -> save as ... erl/all and it ran showing
+%% all documents; and then saved another (same) custom query as erl/showoff
+%% and it ran also
+
+		           , [{ null, {[{<<"_id">>,Id}] 
+			             ++ [{<<"_rev">>,hd(Revs)}] 
+                                     ++ Y} }]
+d342 1
+a342 1
+%% end $Id: erlview.erl,v 1.12 2009/02/09 02:27:10 mmcdanie Exp mmcdanie $
+@
+
+
+1.12
+log
+@worked for saving one, then a second erlang custom query; search on m3m for more info
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.11 2009/02/08 20:16:23 mmcdanie Exp mmcdanie $
+d9 3
+d39 33
+d111 2
+a112 2
+emit(key, value) ->
+ emit    
+d135 1
+a135 1
+    {ok, #state{}}
+a160 69
+%% %%  IN: [<<"map_doc">>,
+%% %%        {[{<<"_id">>,<<"713ec7b5fa1586ea1a7175a1097ef309">>},
+%% %%          {<<"_rev">>,<<"675989282">>},
+%% %%          {<<"language">>,<<"erlang">>},
+%% %%          {<<"views">>,
+%% %%           {[{<<"cool">>,
+%% %%              {[{<<"map">>,
+%% %%                 <<" fun( Doc ) -> \n \t\t\t One = element(1,element(4,Doc)) ,\n \t\t\t case lists:keysearch(<<\"when\">>, 1, One) of\n \t\t\t     {value, _Value} -> \n \t\t\t\t {null, {lists:append( [ {<<\"_id\">>, \n \t\t\t\t\t\t\t   element(2, Doc)},\n \t\t\t\t\t\t\t  {<<\"_rev\">>,\n \t\t\t\t\t\t\t   hd(element(3, Doc))}\n \t\t\t\t\t\t\t ] ,\n \t\t\t\t\t\t\tOne)}} ;\n \t\t\t     _               -> []\n \t\t\t end\n \t\t end.">>}]}}]}}]}]
+%% %% OUT: [[[null,
+%% %%       {[{<<"_id">>,<<"713ec7b5fa1586ea1a7175a1097ef309">>},
+%% %%         {<<"_rev">>,<<"675989282">>},
+%% %%         {<<"language">>,<<"erlang">>},
+%% %%         {<<"views">>,
+%% %%          {[{<<"cool">>,
+%% %%             {[{<<"map">>,
+%% %%                <<" fun( Doc ) -> \n \t\t\t One = element(1,element(4,Doc)) ,\n \t\t\t case lists:keysearch(<<\"when\">>, 1, One) of\n \t\t\t     {value, _Value} -> \n \t\t\t\t {null, {lists:append( [ {<<\"_id\">>, \n \t\t\t\t\t\t\t   element(2, Doc)},\n \t\t\t\t\t\t\t  {<<\"_rev\">>,\n \t\t\t\t\t\t\t   hd(element(3, Doc))}\n \t\t\t\t\t\t\t ] ,\n \t\t\t\t\t\t\tOne)}} ;\n \t\t\t     _               -> []\n \t\t\t end\n \t\t end.">>}]}}]}}]}]]]
+
+%% %%  IN: [<<"map_doc">>,
+%% %%        {[{<<"_id">>,<<"e50f64c1e575d4ddfda39a733300ac8a">>},
+%% %%          {<<"_rev">>,<<"2628795487">>},
+%% %%          {<<"language">>,<<"erlang">>},
+%% %%          {<<"views">>,
+%% %%           {[{<<"cool">>,
+%% %%              {[{<<"map">>,
+%% %%                 <<" fun( Doc ) -> \n \t\t\t One = element(1,element(4,Doc)) ,\n \t\t\t case lists:keysearch(<<\"when\">>, 1, One) of\n \t\t\t     {value, _Value} -> \n \t\t\t\t {null, {lists:append( [ {<<\"_id\">>, \n \t\t\t\t\t\t\t   element(2, Doc)},\n \t\t\t\t\t\t\t  {<<\"_rev\">>,\n \t\t\t\t\t\t\t   hd(element(3, Doc))}\n \t\t\t\t\t\t\t ] ,\n \t\t\t\t\t\t\tOne)}} ;\n \t\t\t     _               -> []\n \t\t\t end\n \t\t end.">>}]}}]}}]}]
+%% %% OUT: [[[null,
+%% %%       {[{<<"_id">>,<<"e50f64c1e575d4ddfda39a733300ac8a">>},
+%% %%         {<<"_rev">>,<<"2628795487">>},
+%% %%         {<<"language">>,<<"erlang">>},
+%% %%         {<<"views">>,
+%% %%          {[{<<"cool">>,
+%% %%             {[{<<"map">>,
+%% %%                <<" fun( Doc ) -> \n \t\t\t One = element(1,element(4,Doc)) ,\n \t\t\t case lists:keysearch(<<\"when\">>, 1, One) of\n \t\t\t     {value, _Value} -> \n \t\t\t\t {null, {lists:append( [ {<<\"_id\">>, \n \t\t\t\t\t\t\t   element(2, Doc)},\n \t\t\t\t\t\t\t  {<<\"_rev\">>,\n \t\t\t\t\t\t\t   hd(element(3, Doc))}\n \t\t\t\t\t\t\t ] ,\n \t\t\t\t\t\t\tOne)}} ;\n \t\t\t     _               -> []\n \t\t\t end\n \t\t end.">>}]}}]}}]}]]]
+
+%% %%  IN: [<<"map_doc">>,
+%% %%        {[{<<"_id">>,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>},
+%% %%          {<<"_rev">>,<<"1998958978">>},
+%% %%          {<<"who">>,<<"fuzzy bear">>},
+%% %%          {<<"what">>,<<"a new test">>},
+%% %%          {<<"when">>,<<"2009/01/17 23:30">>},
+%% %%          {<<"note">>,<<"yadda yadda, SNL is on">>}]}]
+%% %% OUT: [[[null,
+%% %%       {[{<<"_id">>,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>},
+%% %%         {<<"_rev">>,<<"1998958978">>},
+%% %%         {<<"who">>,<<"fuzzy bear">>},
+%% %%         {<<"what">>,<<"a new test">>},
+%% %%         {<<"when">>,<<"2009/01/17 23:30">>},
+%% %%         {<<"note">>,<<"yadda yadda, SNL is on">>}]}]]]
+
+%% ...
+
+%% %%  IN: [<<"map_doc">>,
+%% %%        {[{<<"_id">>,<<"9ec29aaccd31046d60bc4280c2af6394">>},
+%% %%          {<<"_rev">>,<<"3984935616">>},
+%% %%          {<<"myid">>,24354865410746211165167122214821582281671811395},
+%% %%          {<<"who">>,<<"pooh">>},
+%% %%          {<<"what">>,<<"carrots">>},
+%% %%          {<<"when">>,<<"2009/01/18 01:57">>},
+%% %%          {<<"note">>,<<"ya ya ya">>}]}]
+%% %% OUT: [[[null,
+%% %%       {[{<<"_id">>,<<"9ec29aaccd31046d60bc4280c2af6394">>},
+%% %%         {<<"_rev">>,<<"3984935616">>},
+%% %%         {<<"myid">>,2.435486541074621e46},
+%% %%         {<<"who">>,<<"pooh">>},
+%% %%         {<<"what">>,<<"carrots">>},
+%% %%         {<<"when">>,<<"2009/01/18 01:57">>},
+%% %%         {<<"note">>,<<"ya ya ya">>}]}]]]
+%% .
+
+d166 1
+a166 1
+    ?LOG([{?MODULE, prompt, _Data}, _From, _State]) ,
+d182 1
+a182 1
+    ?LOG([{reset, _Data}, _From, _State]) ,
+d185 1
+a185 1
+    {reply, R#response.success, #state{}}
+d237 1
+a237 1
+    {reply, Reply, #state{}}
+d241 1
+a241 1
+handle_call({map_doc, #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}=Doc}
+d244 1
+a244 1
+?LOG([{{map_doc,Body}, _From, _State}]) ,
+d251 12
+a262 2
+		           ,io:fwrite("XXXXXXXX: ~n~n~p~n~n", [X])
+			   , Y = element(1,X)
+d269 1
+d276 1
+a276 3
+, ?LOG([{{map_doc,L}, _From, _State}])
+    , {reply, L, #state{}}
+
+d323 1
+a323 1
+%% end $Id: erlview.erl,v 1.11 2009/02/08 20:16:23 mmcdanie Exp mmcdanie $
+@
+
+
+1.11
+log
+@checkpoint; not working though all 7 eunit tests run successfully
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.10 2009/02/06 16:55:50 mmcdanie Exp mmcdanie $
+d9 3
+a80 67
+%% Doc == #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}
+add_idrev(#doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta}=Doc) ->
+%% Content == document content (not including _id and _rev
+%% add_idrev(Doc, Content) ->
+%% ?LOG( [{Doc, Content}] ) ,
+%% view_insert_query_results: [[[{null,{[{<<"_id">>,
+%%                                        <<"e50f64c1e575d4ddfda39a733300ac8a">>},
+%%                                       {<<"_rev">>,<<"2628795487">>},
+%%                                       {<<"language">>,<<"erlang">>},
+%%                                       {<<"views">>,
+%%                                        {[{<<"cool">>,
+%%                                           {[{<<"map">>,
+%%                                              <<" fun( Doc ) -> \n \t\t\t One = element(1,element(4,Doc)) ,\n \t\t\t case lists:keysearch(<<\"when\">>, 1, One) of\n \t\t\t     {value, _Value} -> \n \t\t\t\t {null, {lists:append( [ {<<\"_id\">>, \n \t\t\t\t\t\t\t   element(2, Doc)},\n \t\t\t\t\t\t\t  {<<\"_rev\">>,\n \t\t\t\t\t\t\t   hd(element(3, Doc))}\n \t\t\t\t\t\t\t ] ,\n \t\t\t\t\t\t\tOne)}} ;\n \t\t\t     _               -> []\n \t\t\t end\n \t\t end.">>}]}}]}}]}}]],
+%%                             [[{null,{[{<<"_id">>,
+%%                                        <<"1e8fef9320ca4b8dc2e8265e28e11c2c">>},
+%%                                       {<<"_rev">>,<<"1998958978">>},
+%%                                       {<<"who">>,<<"fuzzy bear">>},
+%%                                       {<<"what">>,<<"a new test">>},
+%%                                       {<<"when">>,<<"2009/01/17 23:30">>},
+%%                                       {<<"note">>,
+%%                                        <<"yadda yadda, SNL is on">>}]}}]],
+
+%%     io:fwrite("~n=> Doc: ~p~n=> Content: ~p~n", [Doc,Content]) ,
+%%      Out =  case     is_list( element(1, Content) )
+%%  	       of true -> [null, Content] ;
+%%  	       false ->
+%%  		   [null, { <<"_id">>, element(2, Doc) }
+%%  		    , { <<"_rev">>, hd(element(3, Doc)) }
+%%  		   ]
+%%  		       ++ [Content]
+%%  		 end ,
+
+    Out = Id ++ Revs ++ Body ,
+    
+    io:fwrite("~n=> Doc: ~p~n=> Out: ~p~n", [Doc,Out]) ,
+    Out
+.%add_idrev/2
+
+
+% runs F(Doc) and adds _id,_rev as needed
+run_fun(F, #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta}=Doc) -> 
+
+io:fwrite("~n~n===> Id: ~p~n===> Revs: ~p~n===> Body: ~p~n~n",
+	  [Id, Revs, Body]) ,
+
+timer:sleep(3000) ,
+
+Content = F(Body) ,
+%%      Out =  try     is_list( element(1, Content) )
+%%  	       of true -> 
+%% 		    [[{null, Content}]] ;
+%%  	       false   ->
+%% 		    [[{null, add_idrev(Doc)}]]
+%% 	    catch _:_  -> 
+%% 		    [[{null, Content}]]
+%% 	    end ,
+
+%% io:fwrite("~n=> Out: ~p~n", [Out]) ,
+%%     Out
+
+ ZZ = Id ++ Revs ++ Content ,
+
+ ZZ
+
+.%run_fun/2
+
+
+a83 13
+test_fun( Doc ) -> 
+  One = element(1,element(3,Doc)) ,
+  try lists:keysearch(<<"when">>, 1, One) of
+   {value, _Value} -> 
+	    {null, { [ {<<"_id">>, 
+			element(2, Doc)},
+		       {<<"_rev">>,hd(element(3, Doc))}
+		     ]
+		     ++ One } } ;
+
+	_               -> []
+    catch _:_   -> []
+ end.
+d197 1
+a197 1
+%% handle_call({?MODULE, prompt, [ H | T ] = Data}, _From, _State) ->
+d202 1
+a202 1
+  	<<"map_doc">> -> handle_call( {map_docs, T}, z,q )
+d244 15
+d260 1
+a260 11
+    R = #response{} ,
+
+    Reply =  lists:foldl( fun(BinFunction, Acc) ->
+				  Acc ,
+      R = #response{} ,
+      try
+	  FunStr = binary_to_list( BinFunction ) ,
+	  {ok, Tokens, _} = erl_scan:string(FunStr) ,
+	  {ok, [Form]} = erl_parse:parse_exprs(Tokens) ,
+	  Bindings = erl_eval:new_bindings() ,
+	  {value, Fun, _} = erl_eval:expr(Form, Bindings) ,
+d262 1
+a262 5
+	  Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    % ets overwrites
+	  ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) % identical record
+
+	  of true    -> R#response.success ;
+	  {error, R} -> R#response.ets_fail
+d264 3
+a266 3
+      catch _:_ ->
+	      ?ERROR([ R#response.bad_eval ]) ,
+	      R#response.bad_eval
+d268 1
+a268 1
+      end end, "", BinFunctions ) ,
+d274 4
+a277 2
+handle_call({map_docs, Docs}, _From, _State) ->
+?LOG( [ {map_docs,Docs}, _From, _State ] ) ,
+a279 45
+io:fwrite("===> List_of_funs: ~n~n~p~n~n", [List_of_funs]) ,
+%%     {doc,
+%%      <<"9ec29aaccd31046d60bc4280c2af6394">>,
+%%      [<<"3984935616">>],
+%%      {[{<<"myid">>,
+%% 	24354865410746211165167122214821582281671811395},
+%%        {<<"who">>,<<"pooh">>},
+%%        {<<"what">>,<<"carrots">>},
+%%        {<<"when">>,<<"2009/01/18 01:57">>},
+%%        {<<"note">>,<<"ya ya ya">>}]},
+%%      [],false,[]}
+
+%%      L = lists:map(
+%% 	   fun(#doc{id=_Id,deleted=_Del,body=Body,revs=_Revs,meta=_Meta}=Doc) ->
+%% 		   [ fun(F) -> G = binary_to_term(F), G(Body) end || F <- List_of_funs ]
+%% 	   end,
+%% 	   Docs
+%% 	  ) ,
+
+
+L = lists:map( 
+     fun(#doc{id=_Id,deleted=_Del,body=Body,revs=_Revs,meta=_Meta} = Doc) ->
+
+	     lists:map( 
+               fun(Fa) -> Ga = binary_to_term(Fa), Ga(Body) end , List_of_funs )
+     end, Docs ) ,
+
+
+
+%%      L = lists:map( fun(Doc) ->
+%%  			   [ lists:map( fun(F) -> 
+%%  						G = binary_to_term(F), 
+
+%%  					run_fun(G, Doc)
+%%  					end, List_of_funs ) ]
+%%  		   end, Docs ) ,
+
+%% L = [[ [null] ++ Doc ]] , % ok for a single fun
+
+ets:match_delete(cdb_table, '$1') ,
+
+  {reply, L, #state{}} 
+	
+. % handle_call map_docs
+
+d281 16
+d298 2
+d301 1
+d347 1
+a347 1
+%% end $Id: erlview.erl,v 1.10 2009/02/06 16:55:50 mmcdanie Exp mmcdanie $
+@
+
+
+1.10
+log
+@works when saving for the first time a valid fun, or running the valid fun.  NOTE that the
+output of handle_call( {map_doc ...  )  is fixed output right now which is
+probably why only first save works (buy there may be other probs).
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.9 2009/02/06 16:39:59 mmcdanie Exp mmcdanie $
+d9 5
+d41 2
+d78 2
+a79 1
+%% Doc == type::doc()
+d81 62
+a142 6
+add_idrev(Doc, Content) ->
+    [ { <<"_id">>, element(2, Doc) }
+      , { <<"_rev">>, hd(element(3, Doc)) }
+    ]
+    ++ Content
+.
+d148 14
+d251 1
+a251 18
+%% %%  IN: [<<"map_doc">>,
+%% %%        {[{<<"_id">>,<<"63e0ea326c4321bff2608141e201c960">>},
+%% %%          {<<"_rev">>,<<"3446932169">>},
+%% %%          {<<"myid">>,
+%% %%           <<"16522816470249139751422478824221512424025424784991883">>},
+%% %%          {<<"who">>,<<"pooh">>},
+%% %%          {<<"what">>,<<"apples">>},
+%% %%          {<<"when">>,<<"2009/01/18 02:02">>},
+%% %%          {<<"note">>,<<"yum, apples!">>}]}]
+%% %% OUT: [[[null,
+%% %%       {[{<<"_id">>,<<"63e0ea326c4321bff2608141e201c960">>},
+%% %%         {<<"_rev">>,<<"3446932169">>},
+%% %%         {<<"myid">>,
+%% %%          <<"16522816470249139751422478824221512424025424784991883">>},
+%% %%         {<<"who">>,<<"pooh">>},
+%% %%         {<<"what">>,<<"apples">>},
+%% %%         {<<"when">>,<<"2009/01/18 02:02">>},
+%% %%         {<<"note">>,<<"yum, apples!">>}]}]]]
+a271 39
+map_docs() ->
+  Lf =  [[[{null,{[{<<"_id">>,<<"713ec7b5fa1586ea1a7175a1097ef309">>},
+           {<<"_rev">>,<<"675989282">>},
+           {<<"language">>,<<"erlang">>},
+           {<<"views">>,
+            {[{<<"cool">>,
+               {[{<<"map">>,
+                  <<" fun( Doc ) -> \n \t\t\t One = element(1,element(4,Doc)) ,\n \t\t\t case lists:keysearch(<<\"when\">>, 1, One) of\n \t\t\t     {value, _Value} -> \n \t\t\t\t {null, {lists:append( [ {<<\"_id\">>, \n \t\t\t\t\t\t\t   element(2, Doc)},\n \t\t\t\t\t\t\t  {<<\"_rev\">>,\n \t\t\t\t\t\t\t   hd(element(3, Doc))}\n \t\t\t\t\t\t\t ] ,\n \t\t\t\t\t\t\tOne)}} ;\n \t\t\t     _               -> []\n \t\t\t end\n \t\t end.">>}]}}]}}]}}]],
+ [[{null,{[{<<"_id">>,<<"e50f64c1e575d4ddfda39a733300ac8a">>},
+           {<<"_rev">>,<<"2628795487">>},
+           {<<"language">>,<<"erlang">>},
+           {<<"views">>,
+            {[{<<"cool">>,
+               {[{<<"map">>,
+                  <<" fun( Doc ) -> \n \t\t\t One = element(1,element(4,Doc)) ,\n \t\t\t case lists:keysearch(<<\"when\">>, 1, One) of\n \t\t\t     {value, _Value} -> \n \t\t\t\t {null, {lists:append( [ {<<\"_id\">>, \n \t\t\t\t\t\t\t   element(2, Doc)},\n \t\t\t\t\t\t\t  {<<\"_rev\">>,\n \t\t\t\t\t\t\t   hd(element(3, Doc))}\n \t\t\t\t\t\t\t ] ,\n \t\t\t\t\t\t\tOne)}} ;\n \t\t\t     _               -> []\n \t\t\t end\n \t\t end.">>}]}}]}}]}}]],
+ [[{null,{[{<<"_id">>,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>},
+           {<<"_rev">>,<<"1998958978">>},
+           {<<"who">>,<<"fuzzy bear">>},
+           {<<"what">>,<<"a new test">>},
+           {<<"when">>,<<"2009/01/17 23:30">>},
+           {<<"note">>,<<"yadda yadda, SNL is on">>}]}}]],
+ [[{null,{[{<<"_id">>,<<"63e0ea326c4321bff2608141e201c960">>},
+           {<<"_rev">>,<<"3446932169">>},
+           {<<"myid">>,
+            <<"16522816470249139751422478824221512424025424784991883">>},
+           {<<"who">>,<<"pooh">>},
+           {<<"what">>,<<"apples">>},
+           {<<"when">>,<<"2009/01/18 02:02">>},
+           {<<"note">>,<<"yum, apples!">>}]}}]],
+ [[{null,{[{<<"_id">>,<<"9ec29aaccd31046d60bc4280c2af6394">>},
+           {<<"_rev">>,<<"3984935616">>},
+           {<<"myid">>,2.435486541074621e46},
+           {<<"who">>,<<"pooh">>},
+           {<<"what">>,<<"carrots">>},
+           {<<"when">>,<<"2009/01/18 01:57">>},
+           {<<"note">>,<<"ya ya ya">>}]}}]]]
+  , Lf
+.
+
+d279 1
+a279 1
+  	<<"map_doc">> -> handle_call( {map_docs, T}, x,y )
+a320 1
+% NEED TO loop in case BinFunctions more than one fun
+d338 1
+a338 1
+	  {error, R} -> R#response.failure
+d342 1
+a342 1
+	      R#response.failure
+d350 2
+a351 2
+handle_call({map_docs, Doc}, _From, _State) ->
+?LOG( [ {map_docs,Doc}, _From, _State ] ) ,
+d353 27
+a379 1
+    _List_of_funs = lists:map( fun(F) -> element(2,hd(F)) end, Tbl ) ,
+a380 7
+%%     L = lists:map( fun(Doc) ->
+%% 			   erlang:garbage_collect() ,
+%% 			   [ lists:map( fun(F) -> 
+%% 						G = binary_to_term(F), 
+%% 						G(Doc) 
+%% 					end, List_of_funs ) ]
+%% 		   end, Docs ) ,
+a381 2
+%% L = [[ [null] ++ element(1, hd(Doc)) ]] ,
+L = [[ [null] ++ Doc ]] ,
+d383 9
+a391 11
+%%
+%%  fun( Doc ) -> 
+%%    One = element(1,element(3,Doc)) ,
+%%    case lists:keysearch(<<"when">>, 1, One) of
+%%    {value, _Value} -> 
+%%    {null, { lists:append(
+%%  [ {<<"_id">>, element(2, Doc)},{<<"_rev">>,hd(element(3, Doc))}
+%%  ] , One) } } ;
+%%    _               -> []
+%%    end
+%%  end.
+d393 1
+a395 31
+
+%% my L output above is identical to Lf output below but L output fails
+%% "identical" except for some non-term-changing whitespace.
+%%
+%%  Lf =    [[[{null,{[{<<"_id">>,
+%%                                         <<"1e8fef9320ca4b8dc2e8265e28e11c2c">>},
+%%                                        {<<"_rev">>,<<"1998958978">>},
+%%                                        {<<"who">>,<<"fuzzy bear">>},
+%%                                        {<<"what">>,<<"a new test">>},
+%%                                        {<<"when">>,<<"2009/01/17 23:30">>},
+%%                                        {<<"note">>,
+%%                                         <<"yadda yadda, SNL is on">>}]}}]],
+%%                              [[{null,{[{<<"_id">>,
+%%                                         <<"63e0ea326c4321bff2608141e201c960">>},
+%%                                        {<<"_rev">>,<<"3446932169">>},
+%%                                        {<<"myid">>,
+%%                                         <<"16522816470249139751422478824221512424025424784991883">>},
+%%                                        {<<"who">>,<<"pooh">>},
+%%                                        {<<"what">>,<<"apples">>},
+%%                                        {<<"when">>,<<"2009/01/18 02:02">>},
+%%                                        {<<"note">>,<<"yum, apples!">>}]}}]],
+%%                              [[{null,{[{<<"_id">>,
+%%                                         <<"9ec29aaccd31046d60bc4280c2af6394">>},
+%%                                        {<<"_rev">>,<<"3984935616">>},
+%%                                        {<<"myid">>,2.435486541074621e46},
+%%                                        {<<"who">>,<<"pooh">>},
+%%                                        {<<"what">>,<<"carrots">>},
+%%                                        {<<"when">>,<<"2009/01/18 01:57">>},
+%%                                        {<<"note">>,<<"ya ya ya">>}]}}]]] ,
+%%  io:fwrite("=> Lf: ~p~n", [Lf]) ,
+%% {reply , Lf, #state{} }
+a396 28
+
+%% OR, to be safe (and get other information that might be with doc) use
+%% couch_doc:to_json_obj( Doc, [] )
+%% which I was trying to avoid but may be unavoidable.
+%% CHECK about passing documents to erlview in different form that I don't
+%% have to xlate
+
+%% see the section from couch_query_servers that creates the needed 
+%% output,
+%% like below if there are multiple view funs
+%%
+%%      lists:map(
+%%         fun(Doc) ->
+%%             Json = couch_doc:to_json_obj(Doc, []),
+%%             FunsResults = couch_os_process:prompt(Pid, [<<"map_doc">>, Json]),
+%%             % the results are a json array of function map yields like this:
+%%             % [FunResults1, FunResults2 ...]
+%%             % where funresults is are json arrays of key value pairs:
+%%             % [[Key1, Value1], [Key2, Value2]]
+%%             % Convert the key, value pairs to tuples like
+%%             % [{Key1, Value1}, {Key2, Value2}]
+%%             lists:map(
+%%                 fun(FunRs) ->
+%%                     [list_to_tuple(FunResult) || FunResult <- FunRs]
+%%                 end,
+%%             FunsResults)
+%%         end ,
+%%         Docs)
+d447 1
+a447 1
+%% end $Id: erlview.erl,v 1.9 2009/02/06 16:39:59 mmcdanie Exp mmcdanie $
+@
+
+
+1.9
+log
+@no output to Futon but no errors, either, when running or saving a valid fun
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.8 2009/02/06 15:12:05 mmcdanie Exp mmcdanie $
+d9 3
+d342 2
+a343 1
+L = [[ [null] ++ element(1, hd(Doc)) ]] ,
+d469 1
+a469 1
+%% end $Id: erlview.erl,v 1.8 2009/02/06 15:12:05 mmcdanie Exp mmcdanie $
+@
+
+
+1.8
+log
+@checkpoint
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.7 2009/02/04 23:19:55 mmcdanie Exp mmcdanie $
+d9 1
+a9 1
+%% Revision 1.7  2009/02/04 23:19:55  mmcdanie
+d11 1
+a11 1
+%%
+d17 1
+a17 7
+%%
+%% Revision 1.4  2009/02/01 19:35:35  mmcdanie
+%% checkpoint
+%%
+%% Revision 1.3  2009/01/31 22:50:35  mmcdanie
+%% checkpoint
+%%
+d47 1
+a47 1
+-include("erlview_test.erl").
+a66 8
+ prompt( [H | T] ) ->
+     case H of
+ 	<<"add_fun">>  -> gen_server:call(?MODULE, {add_fun, T} ) ;
+ 	<<"map_docs">> -> gen_server:call(?MODULE, {map_docs, T} )
+     end
+ .
+	    
+
+d78 2
+a79 4
+%% when add_fun is called, then map_docs gets called to run a view
+%% and apparently gen_server:call( ... ) doesn't return info to
+%% the caller so I have to call handle_call(...) directly
+%% maybe I can make handle_call return a message
+a93 2
+%% ?LOG( [{}] ) ,
+
+a94 2
+    %% io:fwrite("=> ~p:init/1~n", [?MODULE]) ,
+
+d96 1
+a97 1
+. % init/1
+d115 5
+a119 4
+% hd(IN) is the request
+%% %% prompt() ->
+%% %%      IN : [<<"add_fun">>,<<"function(doc) {\n  emit(null, doc);\n}">>]
+%% %%      OUT: true
+d250 2
+a251 2
+handle_call({prompt, [ H | T ] = Data}, _From, _State) ->
+    ?LOG([{?MODULE, prompt, Data}, _From, _State]) ,
+d253 11
+a263 2
+  	<<"add_fun">> -> gen_server:call(?MODULE, {add_fun, T} ) ;
+  	<<"map_doc">> -> {reply, map_docs(), x}  % gen_server:call(?MODULE, {map_docs, T} )
+a264 1
+
+d268 1
+d273 2
+a274 1
+    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
+d279 1
+a279 1
+%% Bin = <<"fun(Docs) -> [ lists:keysearch(<<\"what\">>, 1, X) || X <- Docs ] end.">>.
+d296 1
+a296 1
+% NEED TO loop this in case BinFunctions actually is more than a single one
+d300 2
+a301 2
+Reply =  lists:foldl( fun(BinFunction, Acc) ->
+        Acc ,
+d304 5
+a308 7
+	FunStr = binary_to_list( BinFunction ) ,
+	{ok, Tokens, _} = erl_scan:string(FunStr) ,
+	{ok, [Form]} = erl_parse:parse_exprs(Tokens) ,
+	Bindings = erl_eval:new_bindings() ,
+	{value, Fun, _} = erl_eval:expr(Form, Bindings) ,
+
+%% 	is_function( Fun ) 
+d310 2
+a311 2
+						% prevent saving identical funs
+	Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,
+d313 2
+a314 7
+						% ets will overwrite any existing
+						%identical record
+	ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)})
+
+
+	of true -> R#response.success ;       %%% was {ok, fun_parsed}
+        {error, R} -> R#response.failure
+d316 3
+a318 3
+    catch _:_ ->
+	    ?ERROR([ R#response.bad_eval ]) ,
+	    R#response.failure
+d320 1
+a320 1
+     end end, "", BinFunctions ) ,
+d322 1
+a322 1
+  {reply, Reply, #state{}}
+d326 4
+a329 2
+handle_call({map_docs, Docs}, _From, _State) ->
+    ?LOG([{map_docs, Docs}, _From, _State]) ,
+d331 7
+a337 4
+%% e.g. [ [ {"some name",#Fun<erl_eval.6.13229925>} ] ] = ets:match/2
+% actually, I'm storing term to binary so I can recover the fun ref. , so...
+%% e.g. [ [ {"some name",<<131,112,0,0,0, ...>>} ] ] = ets:match/2
+% and
+d339 1
+a339 1
+    Tbl = ets:match(?FUNTABLE, '$1') ,
+d341 1
+a341 21
+%% Tbl = ets:match(cdb_table, '$1').                                       
+%% [[{"92301",<<131,112, ...>>}],
+%%  [{"300233",<<131,112, ...>>}],
+%%  [{"402444",
+%%    <<131,112,0,0,0,151,1,213,76,172,89,236,217,232,254,
+%%      184,178,23,144,76,140,192,206,...>>}]]
+
+    List_of_funs = lists:map( fun(F) -> element(2,hd(F)) end, Tbl ) ,
+
+    ?LOG( [{list_of_funs, List_of_funs}] ) ,
+    
+
+    L = lists:map( fun(Doc) ->
+			   erlang:garbage_collect() ,
+			   [ lists:map( fun(F) -> 
+						G = binary_to_term(F), 
+						G(Doc) 
+					end, List_of_funs ) ]
+		   end, Docs ) ,
+
+%% the following fun has worked from Futon
+a352 30
+%% tested with same fun entered twice w/two different names and that worked too!
+%% the above works with three simple documents (as below, from Futon 
+%% default Custom Query |Run|
+%% {_id: "1e8fef9320ca4b8dc2e8265e28e11c2c", _rev: "1998958978", who: "fuzzy bear", what: "a new test", when: "2009/01/17 23:30", note: "yadda yadda, SNL is on"}
+%% null
+%% ID: 63e0ea326c4321bff2608141e201c960	
+%% {_id: "63e0ea326c4321bff2608141e201c960", _rev: "3446932169", myid: "16522816470249139751422478824221512424025424784991883", who: "pooh", what: "apples", when: "2009/01/18 02:02", note: "yum, apples!"}
+%% null
+%% ID: 9ec29aaccd31046d60bc4280c2af6394	
+%% {_id: "9ec29aaccd31046d60bc4280c2af6394", _rev: "3984935616", myid: 2.435486541074621e+46, who: "pooh", what: "carrots", when: "2009/01/18 01:57", note: "ya ya ya"}
+
+%% and a single saved erlang function that looks like
+%% 		 fun( Doc ) -> 
+%% 			 One = element(1,element(4,Doc)) ,
+%% 			 case lists:keysearch(<<"when">>, 1, One) of
+%% 			     {value, _Value} -> 
+%% 				 {null, {lists:append( [ {<<"_id">>, 
+%% 							   element(2, Doc)},
+%% 							  {<<"_rev">>,
+%% 							   hd(element(3, Doc))}
+%% 							 ] ,
+%% 							One)}} ;
+%% 			     _               -> []
+%% 			 end
+%% 		 end .
+
+
+
+  io:fwrite("=> L: ~p~n", [L]) , 
+%% L2 = lists:reverse(L) ,
+d465 1
+a465 1
+%% end $Id: erlview.erl,v 1.7 2009/02/04 23:19:55 mmcdanie Exp mmcdanie $
+@
+
+
+1.7
+log
+@checkpoint
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.6 2009/02/01 21:50:03 mmcdanie Exp mmcdanie $
+d9 3
+d73 6
+a78 6
+%% prompt( [H | T] ) ->
+%%     case H of
+%% 	<<"add_fun">>  -> gen_server:call(?MODULE, {add_fun, T} ) ;
+%% 	<<"map_docs">> -> gen_server:call(?MODULE, {map_docs, T} )
+%%     end
+%% .
+d85 4
+a88 6
+    lists:append( [
+		   { <<"_id">>, element(2, Doc) }
+		   , { <<"_rev">>, hd(element(3, Doc)) }
+		  ]
+
+		  , Content )
+d110 1
+a110 1
+?LOG( [{}] ) ,
+d134 137
+a270 2
+handle_call({?MODULE, prompt, [ H | T ] = Data}, From, State) ->
+    ?LOG([{prompt, Data}]) ,
+d272 2
+a273 2
+  	<<"add_fun">>  -> gen_server:call(?MODULE, {add_fun, T} ) ;
+  	<<"map_docs">> -> gen_server:call(?MODULE, {map_docs, T} )
+d278 1
+a278 1
+    ?LOG([{reset, _Data}]) ,
+d280 1
+a280 1
+    {reply, R#response.true, #state{}}
+d282 2
+a283 2
+handle_call( {?MODULE, add_fun,BinFunctions}, From, State ) -> % {ok, R} | {error, R}
+    ?LOG([{add_fun, BinFunctions}]) ,
+d329 2
+a330 2
+	of true -> R#response.good_eval ;       %%% was {ok, fun_parsed}
+        {error, R} -> {error, R}
+d334 1
+a334 1
+	    R#response.bad_eval
+d343 1
+a343 1
+    ?LOG([{map_docs, Docs}]) ,
+d526 1
+a526 1
+%% end $Id: erlview.erl,v 1.6 2009/02/01 21:50:03 mmcdanie Exp mmcdanie $
+@
+
+
+1.6
+log
+@someday I'll remember to compile before saving !
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.5 2009/02/01 21:48:37 mmcdanie Exp mmcdanie $
+d9 3
+d70 16
+d87 2
+d133 7
+a139 4
+handle_call({prompt, _Data}, _From, _State) ->
+    ?LOG([{prompt, _Data}]) ,
+    R = #response{} ,
+    {reply, R#response.true, #state{}}
+d146 1
+a146 1
+handle_call( {add_fun,[BinFunctions]}, _From, _State ) ->
+d173 5
+a177 2
+Reply =    try
+	FunStr = binary_to_list( BinFunctions ) ,
+d185 2
+a186 3
+  	ets:insert( ?FUNTABLE, 
+ 		    {integer_to_list(random:uniform(1000000)), 
+ 		     term_to_binary( Fun ) } ) 
+d188 3
+a190 2
+	of true ->
+	    R#response.good_eval        %%% was {ok, fun_parsed}
+d192 4
+d200 2
+a201 2
+    end ,
+?LOG([{Reply}]) ,
+d203 1
+d225 1
+a225 1
+    ?LOG( [{List_of_funs}] ) ,
+d228 19
+a246 7
+    L = 
+lists:map( fun(Doc) ->
+		[ lists:map( fun(F) -> 
+			       G = binary_to_term(F), 
+			       G(Doc) 
+			   end, List_of_funs ) ]
+	   end, Docs ) ,
+d248 1
+d276 1
+a276 1
+ io:fwrite("=> L: ~p~n", [L]) , 
+d390 1
+a390 1
+%% end $Id: erlview.erl,v 1.5 2009/02/01 21:48:37 mmcdanie Exp mmcdanie $
+@
+
+
+1.5
+log
+@works with proper stored function (only tested with a single function and three documents)
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.4 2009/02/01 19:35:35 mmcdanie Exp mmcdanie $
+d9 3
+d227 2
+a228 2
+%% 		 end
+.
+d345 1
+a345 1
+%% end $Id: erlview.erl,v 1.4 2009/02/01 19:35:35 mmcdanie Exp mmcdanie $
+@
+
+
+1.4
+log
+@checkpoint
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.3 2009/01/31 22:50:35 mmcdanie Exp mmcdanie $
+d9 3
+d194 32
+a225 18
+    lists:map( fun(_F) ->
+	       lists:map( 
+		 fun( Doc ) -> 
+			 One = element(1,element(4,Doc)) ,
+			 case lists:keysearch(<<"when">>, 1, One) of
+			     {value, _Value} -> 
+				 [{null, {lists:append( [ {<<"_id">>, 
+							   element(2,
+								   Doc)},
+							  {<<"_rev">>,
+							   hd(element(3,
+								      Doc))}
+							 ] ,
+							One)}}] ;
+			     _               -> []
+			 end
+		 end, 
+		 Docs )  end, List_of_funs) ,
+d227 2
+a228 1
+ io:fwrite("=> L: ~p~n", [L]) ,
+d231 1
+a231 27
+  {reply, L, #state{}}
+
+%%    [[[{null,{[{<<"_id">>,
+%%                                        <<"1e8fef9320ca4b8dc2e8265e28e11c2c">>},
+%%                                       {<<"_rev">>,<<"1998958978">>},
+%%                                       {<<"who">>,<<"fuzzy bear">>},
+%%                                       {<<"what">>,<<"a new test">>},
+%%                                       {<<"when">>,<<"2009/01/17 23:30">>},
+%%                                       {<<"note">>,
+%%                                        <<"yadda yadda, SNL is on">>}]}}]],
+%%                             [[{null,{[{<<"_id">>,
+%%                                        <<"63e0ea326c4321bff2608141e201c960">>},
+%%                                       {<<"_rev">>,<<"3446932169">>},
+%%                                       {<<"myid">>,
+%%                                        <<"16522816470249139751422478824221512424025424784991883">>},
+%%                                       {<<"who">>,<<"pooh">>},
+%%                                       {<<"what">>,<<"apples">>},
+%%                                       {<<"when">>,<<"2009/01/18 02:02">>},
+%%                                       {<<"note">>,<<"yum, apples!">>}]}}]],
+%%                             [[{null,{[{<<"_id">>,
+%%                                        <<"9ec29aaccd31046d60bc4280c2af6394">>},
+%%                                       {<<"_rev">>,<<"3984935616">>},
+%%                                       {<<"myid">>,2.435486541074621e46},
+%%                                       {<<"who">>,<<"pooh">>},
+%%                                       {<<"what">>,<<"carrots">>},
+%%                                       {<<"when">>,<<"2009/01/18 01:57">>},
+%%                                       {<<"note">>,<<"ya ya ya">>}]}}]]]
+d233 30
+d296 2
+a297 2
+%
+%
+d342 1
+a342 1
+%% end $Id: erlview.erl,v 1.3 2009/01/31 22:50:35 mmcdanie Exp mmcdanie $
+@
+
+
+1.3
+log
+@checkpoint
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.2 2009/01/31 17:04:08 mmcdanie Exp mmcdanie $
+d9 3
+d26 2
+d40 4
+a43 1
+-record(state, {}).
+a54 6
+reset() ->
+%%  gen_server:call(erlview, {reset, []})
+  handle_call({reset, []}) 
+. %reset/0
+    
+
+a60 10
+add_fun(Function) ->
+
+%% but can't really add fun here because I want to evaluate it first
+%% (in handle_call)
+%%     ets:insert( ?FUNTABLE, 
+%% 		{integer_to_list(random:uniform(1000000)), Function} ) ,
+
+%%  gen_server:call(erlview, {add_fun, Function})
+  handle_call({add_fun, Function}) 
+. %add_fun/0
+d68 1
+a68 6
+map_docs(Docs) ->
+%%     ?LOG([{map_docs, Docs}]) ,
+%%      gen_server:call(erlview, {map_docs, Docs})
+    handle_call({map_docs, Docs}) 
+. %map_docs/0
+    
+d83 1
+d85 6
+a90 2
+%% io:fwrite("=> ~p:init/1~n", [?MODULE]) ,
+    {ok, #state{}}.
+d101 9
+a109 8
+handle_call(_Request, _From, State) ->
+    Reply = ok,
+    {reply, Reply, State}
+.
+
+handle_call({reset, []}) ->
+    ?LOG([{reset, []}]) ,
+    "true\"\n"
+d111 7
+a117 2
+handle_call({add_fun, [BinFunction]}) ->
+    ?LOG([{add_fun, BinFunction}]) ,
+d139 6
+a144 2
+    try
+	FunStr = binary_to_list( BinFunction ) ,
+d149 6
+a154 4
+?LOG( [Fun, {Fun}] ) ,
+?LOG( [ets_insert,{	ets:insert( ?FUNTABLE, 
+		    {integer_to_list(random:uniform(1000000)), 
+		     term_to_binary( Fun ) } ) }] )
+d157 1
+a157 1
+	    {ok, fun_parsed}
+d160 7
+a166 4
+	    ?ERROR([{add_fun, fun_didnt_eval_try_another_fun}]) ,
+	    {error, fun_didnt_eval_try_another_fun}
+    end
+%handle_call/1  add_fun
+d168 1
+a168 3
+%
+%
+handle_call({map_docs, Docs}) ->
+d190 22
+a211 20
+L = lists:map( fun(_F) ->
+		       lists:map( 
+			 fun( Doc ) -> 
+				 One = element(1,element(4,Doc)) ,
+				 case lists:keysearch(<<"when">>, 1, One) of
+				     {value, _Value} -> 
+					 [[{null, {lists:append( [ {<<"_id">>, 
+								    element(2, Doc)} ,
+								   {<<"_rev">>,
+								    hd(element(3, Doc))}
+								  ] ,
+								 One)}}]] ;
+				     _               -> []
+				 end
+			 end, 
+			 Docs )  end, List_of_funs) ,
+
+io:fwrite("=> L: ~p~n", [L]) ,
+lists:reverse(L) ,
+L
+d213 1
+d274 5
+d320 1
+a320 1
+%% end $Id: erlview.erl,v 1.2 2009/01/31 17:04:08 mmcdanie Exp mmcdanie $
+@
+
+
+1.2
+log
+@checkpoint ; though now the ets table is getting populated via add_fun before handle_call
+is called
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.1 2009/01/31 02:32:06 mmcdanie Exp mmcdanie $
+d9 4
+d26 1
+d53 6
+d60 5
+a64 2
+ 		ets:insert( ?FUNTABLE, 
+ 			    {integer_to_list(random:uniform(1000000)), Function} ) ,
+d118 45
+d167 38
+a204 47
+    FunListTup = ets:match(?FUNTABLE, '$1') ,
+io:fwrite("=> ~p, FunListTup: ~p~n", [?MODULE, FunListTup]) ,
+ {ok, Io} = file:open("/tmp/foo", [append]) ,
+ io:fwrite(Io, "=> FunListTup: ~p~n---~n", [FunListTup]) ,
+ file:close(Io) ,
+
+
+%% exit(normal) ,
+%% Fun = element(1, FunListTup) ,
+%% %% foreach fun run it against each doc
+%% lists:foldl( fun(Doc, Acc) -> lists:append(Acc, Fun(Doc)) end, Docs )
+
+%% this is the closest so far
+%% It works the *first* time if I choose from Futon Custom view,
+%% dropdown erlang, and local.ini has 'erlang = /dev/null' in [query_servers]
+%% Actually, if I keep pressing 'Run' it works again and again.
+%% But if I choose the exact same code
+%% fun(Docs) -> lists:keysearch(<<"when">>, 1, Docs) end.
+%% which was saved then I get function_clause error (and, it shouldn't matter
+%% at all what the code is because the return from erlview map_docs is
+%% hard-coded).
+%% {function_clause,
+%%     [{couch_view_updater,view_insert_doc_query_results,
+%%          [{doc,<<"1e8fef9320ca4b8dc2e8265e28e11c2c">>,
+%%               [<<"1998958978">>],
+%%               {[{<<"who">>,<<"fuzzy bear">>},
+%%                 {<<"what">>,<<"a new test">>},
+%%                 {<<"when">>,<<"2009/01/17 23:30">>},
+%%                 {<<"note">>,<<"yadda yadda, SNL is on">>}]},
+%%               [],false,[]},
+%%           [],
+%%           [{{view,1,
+%%                 [<<"what">>],
+%%                <<"fun(Docs) -> lists:keysearch(<<\"what\">>, 1, Docs) end.">>,
+%%                 {btree,<0.73.0>,nil,#Fun<couch_btree.3.23070627>,
+%%                     #Fun<couch_btree.4.117278773>,
+%%                     #Fun<couch_view.less_json_keys.2>,
+%%                     #Fun<couch_view_group.7.3084131>},
+%%                 []},
+%%             []},
+%% ...
+%%
+%% AND, the reason it worked w/Custom and erroring as saved is because the 
+%% hard-coded format I am using is for when there is a SINGLE view saved
+%% in the db.  I removed all but one erlang view in db and then running that
+%% view worked.  So, I know the single-view-available format; now to work
+%% on the multiple-view available (which I think is a list of these).
+a232 16
+L =  lists:map( 
+  fun( Doc ) -> One = element(1,element(4,Doc)) ,
+		io:fwrite("=> One: ~p~n", [One]) ,
+		case lists:keysearch(<<"when">>, 1, One)
+		    of {value, _Value} -> 
+			[[{null, {lists:append( [ {<<"_id">>, element(2, Doc)}
+					, {<<"_rev">>, hd(element(3, Doc))} ] ,
+				      One)}}]] ;
+		    _                  -> []
+		end
+  end, 
+  Docs )  ,
+
+io:fwrite("=> L: ~p~n", [L]) ,
+lists:reverse(L) ,
+L
+d262 1
+a262 61
+
+
+;
+handle_call({add_fun, BinFunction}) ->
+    ?LOG([{add_fun, BinFunction}]) ,
+%% thanks to:
+%% http://erlang.org/pipermail/erlang-questions/2003-November/010544.html
+%% for the scan/parse/eval
+%%
+%% Bin = <<"fun(Docs) -> [ lists:keysearch(<<\"what\">>, 1, X) || X <- Docs ] end.">>.
+%% FunStr = binary_to_list( Bin ).
+%% {ok, Tokens, _} = erl_scan:string(FunStr).
+%% {ok, [Form]} = erl_parse:parse_exprs(Tokens).
+%% Bindings = erl_eval:new_bindings().
+%% {value, Fun, _} = erl_eval:expr(Form, Bindings).
+%% 118> Fun.
+%% #Fun<erl_eval.6.13229925>
+%% 119> Fun( [{<<"who">>, scooby}, {<<"what">>, doo}] ).
+%% ** exception error: bad argument
+%%      in function  lists:keysearch/3
+%%         called as lists:keysearch(<<"what">>,1,{<<"who">>,scooby})
+%% 
+%% NOTE that the fun evaluated as valid but has runtime error.  So,
+%%      it is probably worthwhile to put some good feedback in to the
+%%      Erlang funs so when they fail I can figure out why.
+
+    try
+	 
+	FunStr = binary_to_list( BinFunction ) ,
+	{ok, Tokens, _} = erl_scan:string(FunStr) ,
+	{ok, [Form]} = erl_parse:parse_exprs(Tokens) ,
+	Bindings = erl_eval:new_bindings() ,
+	{value, Fun, _} = erl_eval:expr(Form, Bindings) ,
+
+ 		ets:insert( ?FUNTABLE, 
+ 			    {integer_to_list(random:uniform(1000000)), Fun} ) ,
+
+	( catch Fun = wrong ) ,
+     
+	case Fun == wrong
+	    of true ->
+	    "{\"error\": \"some_error_code\", \"reason\": \"error message\"}\n";
+	    
+	    false -> 
+		ets:insert( ?FUNTABLE, 
+			    {integer_to_list(random:uniform(1000000)), Fun} ) ,
+    FunListTup = ets:match(?FUNTABLE, '$1') ,
+io:fwrite("=> ~p, FunListTup: ~p~n", [?MODULE, FunListTup]) ,
+ {ok, Io} = file:open("/tmp/foo", [append]) ,
+ io:fwrite(Io, "=> FunListTup: ~p~n---~n", [FunListTup]) ,
+ file:close(Io) ,
+		true 
+	end
+
+	of true ->
+	    "true\"\n" 
+
+    catch _:_ ->
+	    "{\"error\": \"some_error_code\", \"reason\": \"error message\"}\n"
+    end
+. %handle_call/1  add_fun
+d307 1
+a307 1
+%% end $Id: erlview.erl,v 1.1 2009/01/31 02:32:06 mmcdanie Exp mmcdanie $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id$
+d8 4
+a11 1
+%% $Log$
+d43 2
+a44 1
+ gen_server:call(erlview, {reset, []})
+d49 3
+d56 6
+a61 1
+    
+d64 2
+a65 2
+%%    gen_server:call(erlview, {map_docs, Docs})
+  handle_call({map_docs, Docs}) 
+a80 1
+    ets:new(?FUNTABLE, [named_table]) ,
+d82 1
+d108 1
+a108 1
+    FunListTup = ets:match(cdb_table, '$1') ,
+d110 4
+d197 2
+a198 1
+lists:reverse(L)
+d200 1
+a200 1
+%% My_json = { lists:append( [{<<"_id">>,Doc#doc.id}, {<<"_rev">>, hd(Doc#doc.revs)}], element(1,Doc#doc.body)) }
+d207 2
+a208 2
+%% here's the section from couch_query_servers that creates the needed 
+%% output, so, I need to have output like above but wrapped up as a list
+a213 1
+            
+d262 4
+a265 1
+	( catch Fun = foo ) ,
+d267 5
+a271 2
+	case foo == Fun
+	    of true -> 
+d274 6
+a279 2
+		true ; 
+	    false -> false 
+d333 1
+a333 1
+%% end $Id$
+@
