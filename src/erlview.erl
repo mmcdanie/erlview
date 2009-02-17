@@ -187,6 +187,10 @@
 -include("couch_db.hrl").
 %% #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}=Doc
 
+-author('Michael McDaniel dba Automated Systems, http://autosys.us').
+-copyright('2009 Michael McDaniel dba Automated Systems, http://autosys.us').
+-license('Apache 2.0, see the documentation').
+
 -define(SERVER, ?MODULE).
 -define(FUNTABLE, cdb_table).
 -define(QTABLE, erlview_queue).
