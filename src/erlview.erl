@@ -326,11 +326,13 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 %% @doc
 %% Used in map funs, finds documents having any of the requested fields, NOT IMPLEMENTED
 %%
+%%<pre>
 %% fun(Doc) -> erlview:find_any_fields( Doc, { &lt;&lt;"who"&gt;&gt;, 
 %%                                       [&lt;&lt;"who"&gt;&gt;,
 %%                                        &lt;&lt;"what"&gt;&gt;,
 %%                                        &lt;&lt;"when"&gt;&gt;] } )
 %% end.
+%%</pre>
 %%
 %% If any Keys are found in Doc, returns fields requested via Out_fields argument.
 %%
