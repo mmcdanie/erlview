@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%%% File    : $Id: erlview.erl,v 1.33 2009/02/16 04:06:25 mmcdanie Exp mmcdanie $
+%%% File    : $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
 %
 %% @doc erlview, an Erlang View Server for CouchDB
 %
@@ -36,6 +36,13 @@
 %%% Created : 24 Jan 2009 by mmcdanie <>
 %%
 %% $Log: erlview.erl,v $
+%% Revision 1.34  2009/02/17 06:08:22  mmcdanie
+%% refactored find_all_content/2 ; cursory testing works same as before; NOTE that
+%% multiple entire_doc/2 work fine with name/views (no mixup); add a single
+%% find_all_content/2 map fun though, and the name/views get mixed up.
+%% Need more testing around this but, on test server I saw mixups with
+%% entire_doc/2 map funs also.
+%%
 %% Revision 1.33  2009/02/16 04:06:25  mmcdanie
 %% *** empty log message ***
 %%
@@ -254,7 +261,7 @@ find_any_content( _Doc, {_Key_pairs, _Out_fields} ) ->
 %%                         { [{&lt;&lt;"who"&gt;&gt;,
 %%                             &lt;&lt;"pooh"&gt;&gt;},
 %%                            {&lt;&lt;"what"&gt;&gt;
-%%                             &lt;&lt;"carrots"&gt;&gt;],
+%%                             &lt;&lt;"carrots"&gt;&gt;}],
 %%                           [ &lt;&lt;"myid"&gt;&gt;,
 %%                             &lt;&lt;"who"&gt;&gt;,
 %%                             &lt;&lt;"when"&gt;&gt; ]
@@ -281,37 +288,29 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 				     Eb )
 			   end,
 			   Key_pairs) ,
-    Match = case  lists:all( fun(T) -> 
-				     lists:member(true,T) 
-			     end,
-			     Truth_list )
-		of true -> true ;
-		  false -> false
-	    end ,
-    
-    Display_Fields =
- 	case Match
- 	    of false          -> Vk = <<"null">>, [] ;
- 	    true              -> Vk = element(2, hd(Key_pairs)) ,
-		lists:map( fun(K) -> 
-				   case lists:keysearch(K, 1, Eb) of
-				       {value, V} -> V ;
-				       _          -> []
-				   end
-			   end,
-			   Out_fields ) 
- 	end ,
 
-    Out = case (lists:flatlength(Display_Fields) > 0) and Match
-	      of true ->
-		  [{ Vk, {[{<<"_id">>,Id}] 
-			  ++ [{<<"_rev">>,hd(Revs)}] 
-			  ++ Display_Fields } }] ;
-	      _       -> 
-		  [{     {[{<<"_id">>,Id}] 
-			  ++ [{<<"_rev">>,hd(Revs)}] 
-			  ++ Body } }]
-	  end ,
+				 
+    Out = 
+  	case is_true(Truth_list)
+ 	    of true -> Vk = element(2, hd(Key_pairs)) ,
+			 Display_Fields = lists:map( fun(K) -> 
+					    case lists:keysearch(K, 1, Eb) of
+						{value, V} -> V ;
+						_          -> []
+					    end
+				    end,
+				    Out_fields ) ,
+
+			 [{ Vk, {[{<<"_id">>,Id}] 
+				 ++ [{<<"_rev">>,hd(Revs)}] 
+				 ++ Display_Fields } }] ;
+				 
+ 	     false  ->
+                        [{    {[{<<"_id">>,Id}] 
+			       ++ [{<<"_rev">>,hd(Revs)}] 
+			       ++ Body } }] 
+	end ,
+    
 
 %% io:fwrite("~n~n===> Vk: ~p~nDisplay_Fields: ~p~nTruth_list: ~p~nMatch: ~p~nOut: ~p~n~n",
 %% [Vk, Display_Fields, Truth_list, Match, Out]) ,
@@ -387,15 +386,17 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 				     Eb )
 			   end,
 			   Keys) ,
-    Match = case  lists:all( fun(T) -> 
-				     lists:member(true,T) 
-			     end,
-			     Truth_list )
-		of true -> true ;
-		  false -> false
-	    end ,
 
-     Out = case (lists:flatlength(Fields) > 0) and Match
+%%     Match = case  lists:all( fun(T) -> 
+%% 				     lists:member(true,T) 
+%% 			     end,
+%% 			     Truth_list )
+%% 		of true -> true ;
+%% 		  false -> false
+%% 	    end ,
+
+%%      Out = case (lists:flatlength(Fields) > 0) and Match
+     Out = case (lists:flatlength(Fields) > 0) and is_true(Truth_list)
 	       of true ->
 		   [{ Vk, {[{<<"_id">>,Id}] 
 			   ++ [{<<"_rev">>,hd(Revs)}] 
@@ -410,6 +411,16 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 . % find_all_fields/2
 
 
+
+is_true(Truth_list) ->
+ case  lists:all( fun(T) -> 
+				     lists:member(true,T) 
+			     end,
+			     Truth_list )
+		of true -> true ;
+		  false -> false
+	    end
+.    
 
 
 % @doc
@@ -666,5 +677,5 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 
-%% end $Id: erlview.erl,v 1.33 2009/02/16 04:06:25 mmcdanie Exp mmcdanie $
+%% end $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
 
