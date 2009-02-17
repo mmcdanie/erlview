@@ -136,7 +136,9 @@
 %%  7) Implement log.
 %%  8) Add search for any doc field (already finding body fields)
 %%     #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}
-%%  9)
+%%  9) Change helper funs to accept atoms or lists 
+%%     ( "for fields or content with spaces" ); that is, instead of requiring
+%%     binaries in the map funs.
 %% 10)
 %% 11)
 %%
