@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%%% File    : $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
+%%% File    : $Id: erlview.erl,v 1.35 2009/02/17 06:38:52 mmcdanie Exp mmcdanie $
 %
 %% @doc erlview, an Erlang View Server for CouchDB
 %
@@ -36,6 +36,9 @@
 %%% Created : 24 Jan 2009 by mmcdanie <>
 %%
 %% $Log: erlview.erl,v $
+%% Revision 1.35  2009/02/17 06:38:52  mmcdanie
+%% refactored entire_doc/2
+%%
 %% Revision 1.34  2009/02/17 06:08:22  mmcdanie
 %% refactored find_all_content/2 ; cursory testing works same as before; NOTE that
 %% multiple entire_doc/2 work fine with name/views (no mixup); add a single
@@ -280,9 +283,8 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 ?LOG( [{Body, {Key_pairs, Out_fields}}] ) ,
 
     Eb = element(1, Body) ,
-						% do all Key_pairs match some 
-						% Body field ; Match == true/false
-    Truth_list = lists:map(fun(K) -> 
+
+    Truth_list = lists:map(fun(K) ->              % search doc content
 				   lists:map( 
 				     fun(Bt) -> K == Bt end, 
 				     Eb )
@@ -293,27 +295,24 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
     Out = 
   	case is_true(Truth_list)
  	    of true -> Vk = element(2, hd(Key_pairs)) ,
-			 Display_Fields = lists:map( fun(K) -> 
-					    case lists:keysearch(K, 1, Eb) of
-						{value, V} -> V ;
-						_          -> []
-					    end
-				    end,
-				    Out_fields ) ,
+                       Out_Fields = lists:map( 
+				      fun(K) -> 
+					      case lists:keysearch(K, 1, Eb) of
+						  {value, V} -> V ;
+						  _          -> []
+					      end
+				      end,
+				      Out_fields ) ,
 
-			 [{ Vk, {[{<<"_id">>,Id}] 
-				 ++ [{<<"_rev">>,hd(Revs)}] 
-				 ++ Display_Fields } }] ;
+                       [{ Vk, {[{<<"_id">>,Id}] 
+			       ++ [{<<"_rev">>,hd(Revs)}] 
+			       ++ Out_Fields } }] ;
 				 
  	     false  ->
-                        [{    {[{<<"_id">>,Id}] 
+                       [{     {[{<<"_id">>,Id}] 
 			       ++ [{<<"_rev">>,hd(Revs)}] 
 			       ++ Body } }] 
 	end ,
-    
-
-%% io:fwrite("~n~n===> Vk: ~p~nDisplay_Fields: ~p~nTruth_list: ~p~nMatch: ~p~nOut: ~p~n~n",
-%% [Vk, Display_Fields, Truth_list, Match, Out]) ,
 
     Out
 . % find_all_content/2 (formerly xemitx/2)
@@ -387,16 +386,7 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 			   end,
 			   Keys) ,
 
-%%     Match = case  lists:all( fun(T) -> 
-%% 				     lists:member(true,T) 
-%% 			     end,
-%% 			     Truth_list )
-%% 		of true -> true ;
-%% 		  false -> false
-%% 	    end ,
-
-%%      Out = case (lists:flatlength(Fields) > 0) and Match
-     Out = case (lists:flatlength(Fields) > 0) and is_true(Truth_list)
+     Out = case is_true(Truth_list) and (lists:flatlength(Fields) > 0)
 	       of true ->
 		   [{ Vk, {[{<<"_id">>,Id}] 
 			   ++ [{<<"_rev">>,hd(Revs)}] 
@@ -412,14 +402,15 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 
 
 
+% [ [true,false,false], [false,false,false,true] ]
 is_true(Truth_list) ->
  case  lists:all( fun(T) -> 
-				     lists:member(true,T) 
-			     end,
-			     Truth_list )
-		of true -> true ;
-		  false -> false
-	    end
+			  lists:member(true,T) 
+		  end,
+		  Truth_list )
+     of true -> true ;
+     false   -> false
+ end
 .    
 
 
@@ -438,22 +429,18 @@ is_true(Truth_list) ->
 entire_doc( Doc, {Key, all} ) ->
     #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
     Eb = element(1, Body) ,
-    Fields =
-	case lists:keysearch(Key, 1, Eb) 
-	    of false          -> Vk = <<"null">>, [] ;
-	    {value, {Key,Vk}} -> Eb
-	end ,
 
-    Out = case lists:flatlength(Fields) > 0
-	      of true ->
-		  [{ Vk, {[{<<"_id">>,Id}] 
-			  ++ [{<<"_rev">>,hd(Revs)}] 
-			  ++ Eb } }] ;
-	      _       -> 
-		  [{     {[{<<"_id">>,Id}] 
-			  ++ [{<<"_rev">>,hd(Revs)}] 
-			  ++ Eb } }]
-	  end , 
+    Out = case lists:keysearch(Key, 1, Eb) 
+	      of false          -> 
+                                   [{     {[{<<"_id">>,Id}] 
+					   ++ [{<<"_rev">>,hd(Revs)}] 
+					   ++ Eb } }] ;
+
+	      {value, {Key,Vk}} -> 
+                                   [{ Vk, {[{<<"_id">>,Id}] 
+					   ++ [{<<"_rev">>,hd(Revs)}] 
+					   ++ Eb } }]
+	      end , 
 
     Out
 . % entire_doc/2
@@ -677,5 +664,5 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 
-%% end $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
+%% end $Id: erlview.erl,v 1.35 2009/02/17 06:38:52 mmcdanie Exp mmcdanie $
 

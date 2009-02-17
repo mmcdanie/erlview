@@ -1,6 +1,7 @@
-head	1.34;
+head	1.35;
 access;
 symbols
+	r026:1.35
 	r025:1.34
 	r024:1.33
 	r023:1.31
@@ -26,9 +27,14 @@ symbols
 	nr002:1.9
 	nr001:1.8;
 locks
-	mmcdanie:1.34; strict;
+	mmcdanie:1.35; strict;
 comment	@# @;
 
+
+1.35
+date	2009.02.17.06.38.52;	author mmcdanie;	state Exp;
+branches;
+next	1.34;
 
 1.34
 date	2009.02.17.06.08.22;	author mmcdanie;	state Exp;
@@ -206,17 +212,13 @@ desc
 @
 
 
-1.34
+1.35
 log
-@refactored find_all_content/2 ; cursory testing works same as before; NOTE that
-multiple entire_doc/2 work fine with name/views (no mixup); add a single
-find_all_content/2 map fun though, and the name/views get mixed up.
-Need more testing around this but, on test server I saw mixups with
-entire_doc/2 map funs also.
+@refactored entire_doc/2
 @
 text
 @%%%-------------------------------------------------------------------
-%%% File    : $Id: erlview.erl,v 1.33 2009/02/16 04:06:25 mmcdanie Exp mmcdanie $
+%%% File    : $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
 %
 %% @@doc erlview, an Erlang View Server for CouchDB
 %
@@ -253,6 +255,13 @@ text
 %%% Created : 24 Jan 2009 by mmcdanie <>
 %%
 %% $Log: erlview.erl,v $
+%% Revision 1.34  2009/02/17 06:08:22  mmcdanie
+%% refactored find_all_content/2 ; cursory testing works same as before; NOTE that
+%% multiple entire_doc/2 work fine with name/views (no mixup); add a single
+%% find_all_content/2 map fun though, and the name/views get mixed up.
+%% Need more testing around this but, on test server I saw mixups with
+%% entire_doc/2 map funs also.
+%%
 %% Revision 1.33  2009/02/16 04:06:25  mmcdanie
 %% *** empty log message ***
 %%
@@ -490,75 +499,36 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 ?LOG( [{Body, {Key_pairs, Out_fields}}] ) ,
 
     Eb = element(1, Body) ,
-						% do all Key_pairs match some 
-						% Body field ; Match == true/false
-    Truth_list = lists:map(fun(K) -> 
+
+    Truth_list = lists:map(fun(K) ->              % search doc content
 				   lists:map( 
 				     fun(Bt) -> K == Bt end, 
 				     Eb )
 			   end,
 			   Key_pairs) ,
-%%     Match = case  lists:all( fun(T) -> 
-%% 				     lists:member(true,T) 
-%% 			     end,
-%% 			     Truth_list )
-%% 		of true -> true ;
-%% 		  false -> false
-%% 	    end ,
 
-    Match =  is_true(Truth_list) ,
-%%     Display_Fields =
-%%   	case Match
-%%  	    of false -> Vk = <<"null">>, [] ;
-
-%%  	    true      -> Vk = element(2, hd(Key_pairs)) ,
-%% 			 lists:map( fun(K) -> 
-%% 					    case lists:keysearch(K, 1, Eb) of
-%% 						{value, V} -> V ;
-%% 						_          -> []
-%% 					    end
-%% 				    end,
-%% 				    Out_fields )
 				 
-%% 			 end ,
-
-%%      Out = case (lists:flatlength(Display_Fields) > 0) and Match
-%%  	      of true ->
-%%  		  [{ Vk, {[{<<"_id">>,Id}] 
-%%  			  ++ [{<<"_rev">>,hd(Revs)}] 
-%%  			  ++ Display_Fields } }] ;
-%%  	      _       -> 
-%%  		  [{     {[{<<"_id">>,Id}] 
-%%  			  ++ [{<<"_rev">>,hd(Revs)}] 
-%%  			  ++ Body } }]
-%%  	  end ,
-
-
     Out = 
-  	case Match
- 	    of false ->
-                        [{    {[{<<"_id">>,Id}] 
+  	case is_true(Truth_list)
+ 	    of true -> Vk = element(2, hd(Key_pairs)) ,
+                       Out_Fields = lists:map( 
+				      fun(K) -> 
+					      case lists:keysearch(K, 1, Eb) of
+						  {value, V} -> V ;
+						  _          -> []
+					      end
+				      end,
+				      Out_fields ) ,
+
+                       [{ Vk, {[{<<"_id">>,Id}] 
 			       ++ [{<<"_rev">>,hd(Revs)}] 
-			       ++ Body } }] ;
-
- 	    true      -> Vk = element(2, hd(Key_pairs)) ,
-			 Display_Fields = lists:map( fun(K) -> 
-					    case lists:keysearch(K, 1, Eb) of
-						{value, V} -> V ;
-						_          -> []
-					    end
-				    end,
-				    Out_fields ) ,
-
-			 [{ Vk, {[{<<"_id">>,Id}] 
-				 ++ [{<<"_rev">>,hd(Revs)}] 
-				 ++ Display_Fields } }]
+			       ++ Out_Fields } }] ;
 				 
+ 	     false  ->
+                       [{     {[{<<"_id">>,Id}] 
+			       ++ [{<<"_rev">>,hd(Revs)}] 
+			       ++ Body } }] 
 	end ,
-    
-
-%% io:fwrite("~n~n===> Vk: ~p~nDisplay_Fields: ~p~nTruth_list: ~p~nMatch: ~p~nOut: ~p~n~n",
-%% [Vk, Display_Fields, Truth_list, Match, Out]) ,
 
     Out
 . % find_all_content/2 (formerly xemitx/2)
@@ -632,16 +602,7 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 			   end,
 			   Keys) ,
 
-%%     Match = case  lists:all( fun(T) -> 
-%% 				     lists:member(true,T) 
-%% 			     end,
-%% 			     Truth_list )
-%% 		of true -> true ;
-%% 		  false -> false
-%% 	    end ,
-
-%%      Out = case (lists:flatlength(Fields) > 0) and Match
-     Out = case (lists:flatlength(Fields) > 0) and is_true(Truth_list)
+     Out = case is_true(Truth_list) and (lists:flatlength(Fields) > 0)
 	       of true ->
 		   [{ Vk, {[{<<"_id">>,Id}] 
 			   ++ [{<<"_rev">>,hd(Revs)}] 
@@ -657,14 +618,15 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 
 
 
+% [ [true,false,false], [false,false,false,true] ]
 is_true(Truth_list) ->
  case  lists:all( fun(T) -> 
-				     lists:member(true,T) 
-			     end,
-			     Truth_list )
-		of true -> true ;
-		  false -> false
-	    end
+			  lists:member(true,T) 
+		  end,
+		  Truth_list )
+     of true -> true ;
+     false   -> false
+ end
 .    
 
 
@@ -683,22 +645,18 @@ is_true(Truth_list) ->
 entire_doc( Doc, {Key, all} ) ->
     #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
     Eb = element(1, Body) ,
-    Fields =
-	case lists:keysearch(Key, 1, Eb) 
-	    of false          -> Vk = <<"null">>, [] ;
-	    {value, {Key,Vk}} -> Eb
-	end ,
 
-    Out = case lists:flatlength(Fields) > 0
-	      of true ->
-		  [{ Vk, {[{<<"_id">>,Id}] 
-			  ++ [{<<"_rev">>,hd(Revs)}] 
-			  ++ Eb } }] ;
-	      _       -> 
-		  [{     {[{<<"_id">>,Id}] 
-			  ++ [{<<"_rev">>,hd(Revs)}] 
-			  ++ Eb } }]
-	  end , 
+    Out = case lists:keysearch(Key, 1, Eb) 
+	      of false          -> 
+                                   [{     {[{<<"_id">>,Id}] 
+					   ++ [{<<"_rev">>,hd(Revs)}] 
+					   ++ Eb } }] ;
+
+	      {value, {Key,Vk}} -> 
+                                   [{ Vk, {[{<<"_id">>,Id}] 
+					   ++ [{<<"_rev">>,hd(Revs)}] 
+					   ++ Eb } }]
+	      end , 
 
     Out
 . % entire_doc/2
@@ -922,8 +880,137 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 
-%% end $Id: erlview.erl,v 1.33 2009/02/16 04:06:25 mmcdanie Exp mmcdanie $
+%% end $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
 
+@
+
+
+1.34
+log
+@refactored find_all_content/2 ; cursory testing works same as before; NOTE that
+multiple entire_doc/2 work fine with name/views (no mixup); add a single
+find_all_content/2 map fun though, and the name/views get mixed up.
+Need more testing around this but, on test server I saw mixups with
+entire_doc/2 map funs also.
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.33 2009/02/16 04:06:25 mmcdanie Exp mmcdanie $
+d39 7
+d283 2
+a284 3
+						% do all Key_pairs match some 
+						% Body field ; Match == true/false
+    Truth_list = lists:map(fun(K) -> 
+d290 1
+a290 21
+%%     Match = case  lists:all( fun(T) -> 
+%% 				     lists:member(true,T) 
+%% 			     end,
+%% 			     Truth_list )
+%% 		of true -> true ;
+%% 		  false -> false
+%% 	    end ,
+
+    Match =  is_true(Truth_list) ,
+%%     Display_Fields =
+%%   	case Match
+%%  	    of false -> Vk = <<"null">>, [] ;
+
+%%  	    true      -> Vk = element(2, hd(Key_pairs)) ,
+%% 			 lists:map( fun(K) -> 
+%% 					    case lists:keysearch(K, 1, Eb) of
+%% 						{value, V} -> V ;
+%% 						_          -> []
+%% 					    end
+%% 				    end,
+%% 				    Out_fields )
+d292 11
+a302 13
+%% 			 end ,
+
+%%      Out = case (lists:flatlength(Display_Fields) > 0) and Match
+%%  	      of true ->
+%%  		  [{ Vk, {[{<<"_id">>,Id}] 
+%%  			  ++ [{<<"_rev">>,hd(Revs)}] 
+%%  			  ++ Display_Fields } }] ;
+%%  	      _       -> 
+%%  		  [{     {[{<<"_id">>,Id}] 
+%%  			  ++ [{<<"_rev">>,hd(Revs)}] 
+%%  			  ++ Body } }]
+%%  	  end ,
+
+d304 1
+a304 4
+    Out = 
+  	case Match
+ 	    of false ->
+                        [{    {[{<<"_id">>,Id}] 
+d306 1
+a306 14
+			       ++ Body } }] ;
+
+ 	    true      -> Vk = element(2, hd(Key_pairs)) ,
+			 Display_Fields = lists:map( fun(K) -> 
+					    case lists:keysearch(K, 1, Eb) of
+						{value, V} -> V ;
+						_          -> []
+					    end
+				    end,
+				    Out_fields ) ,
+
+			 [{ Vk, {[{<<"_id">>,Id}] 
+				 ++ [{<<"_rev">>,hd(Revs)}] 
+				 ++ Display_Fields } }]
+d308 4
+a312 4
+    
+
+%% io:fwrite("~n~n===> Vk: ~p~nDisplay_Fields: ~p~nTruth_list: ~p~nMatch: ~p~nOut: ~p~n~n",
+%% [Vk, Display_Fields, Truth_list, Match, Out]) ,
+d386 1
+a386 10
+%%     Match = case  lists:all( fun(T) -> 
+%% 				     lists:member(true,T) 
+%% 			     end,
+%% 			     Truth_list )
+%% 		of true -> true ;
+%% 		  false -> false
+%% 	    end ,
+
+%%      Out = case (lists:flatlength(Fields) > 0) and Match
+     Out = case (lists:flatlength(Fields) > 0) and is_true(Truth_list)
+d402 1
+d405 6
+a410 6
+				     lists:member(true,T) 
+			     end,
+			     Truth_list )
+		of true -> true ;
+		  false -> false
+	    end
+a428 5
+    Fields =
+	case lists:keysearch(Key, 1, Eb) 
+	    of false          -> Vk = <<"null">>, [] ;
+	    {value, {Key,Vk}} -> Eb
+	end ,
+d430 11
+a440 10
+    Out = case lists:flatlength(Fields) > 0
+	      of true ->
+		  [{ Vk, {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Eb } }] ;
+	      _       -> 
+		  [{     {[{<<"_id">>,Id}] 
+			  ++ [{<<"_rev">>,hd(Revs)}] 
+			  ++ Eb } }]
+	  end , 
+d664 1
+a664 1
+%% end $Id: erlview.erl,v 1.33 2009/02/16 04:06:25 mmcdanie Exp mmcdanie $
 @
 
 
