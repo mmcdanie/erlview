@@ -218,6 +218,7 @@ start_link() ->
 %% @doc
 %% Used in map funs, finds documents having any of the requested content, NOT IMPLEMENTED
 %%
+%%<pre>
 %% returns docs containing a foo of "new", and myid of "123"
 %% and returns fields myid,who,when
 %% fun(Doc) -> erlview:find_any_content(Doc,
@@ -228,7 +229,7 @@ start_link() ->
 %%                             &lt;&lt;"when"&gt;&gt; ] 
 %%                          } )
 %% end.
-%%
+%%</pre>
 %%
 %% find_any_content( Doc::doc(), { Key_pairs::key_pairs() ,
 %%                            Out_fields::fields() } ) -> doc()
