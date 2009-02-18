@@ -5,9 +5,7 @@
 %%%               erlview.erl
 %%%
 %%% Currently needs to be run from within an interactive couchdb 
-%%% session.  And session needs restarting after the tests because
-%%% at the moment test funs are inserted into ets table but not
-%%% removed.
+%%% session.
 %%%
 %%% Created : 31 Jan 2009 by mmcdanie <>
 %%%-------------------------------------------------------------------
