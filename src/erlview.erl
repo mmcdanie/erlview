@@ -202,7 +202,7 @@
 -export([start_link/0]).
 %% map fun helper funs
 -export([find_all_content/2, find_any_content/2]).
--export([find_all_fields/2, find_any_fields/2, entire_doc/2]).
+-export([find_all_fields/2, find_any_fields/2, entire_doc/2, entire_doc/3]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -455,16 +455,19 @@ entire_doc( Doc, without, {Key, all} ) ->
     #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
     Eb = element(1, Body) ,
 
+    Not_key = "no " ++ binary_to_list(Key) ++ " field",
+    Key_not = list_to_binary(Not_key) ,
+
     Out = case lists:keysearch(Key, 1, Eb) 
-	      of {value, {Key,Vk}} -> 
-                                   [{     {[{<<"_id">>,Id}] 
-					   ++ [{<<"_rev">>,hd(Revs)}] 
-					   ++ Eb } }] ;
+	      of {value, {_Key,_Vk}} -> 
+                                   [{          {[{<<"_id">>,Id}] 
+						++ [{<<"_rev">>,hd(Revs)}] 
+						++ Eb } }] ;
 
 	            false          -> 
-                                   [{ Vk, {[{<<"_id">>,Id}] 
-					   ++ [{<<"_rev">>,hd(Revs)}] 
-					   ++ Eb } }]
+                                   [{ Key_not, {[{<<"_id">>,Id}] 
+						++ [{<<"_rev">>,hd(Revs)}] 
+						++ Eb } }]
 	      end , 
 
     Out
@@ -540,15 +543,15 @@ handle_call({prompt, [ H | T ] = _Data}, _From, State) ->
 %%   	<<"map_doc">> -> gen_server:call(?MODULE, {map_docs, T} )
      end
 ;
-handle_call({reset, _Data}, _From, State) ->
-    ?LOG([{reset, _Data}, _From, State]) ,
+handle_call({reset, _Data}, _From, _State) ->
+    ?LOG([{reset, _Data}, _From, _State]) ,
     erlang:garbage_collect() ,
     ets:match_delete(?FUNTABLE, '$1') ,
     R = #response{} ,
     {reply, R#response.success, #state{fun_was="reset"}}
 ;
-handle_call( {add_fun, BinFunctions}, _From, State ) ->
-    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, State]) ,
+handle_call( {add_fun, BinFunctions}, _From, _State ) ->
+    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
 %
 %% thanks to:
 %% http://erlang.org/pipermail/erlang-questions/2003-November/010544.html
@@ -608,7 +611,7 @@ handle_call( {add_fun, BinFunctions}, _From, State ) ->
 
 %handle_call/3  add_fun
 ;
-handle_call({map_doc, Doc} , _From , State) ->
+handle_call({map_doc, Doc} , _From , _State) ->
     List_of_funs = ets:tab2list(?FUNTABLE) ,
 
 %% TODO
