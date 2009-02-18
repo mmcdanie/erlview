@@ -2,7 +2,7 @@ Fri Feb 13 11:04:25 PST 2009
 Michael McDaniel
 
 
-TODO: 
+TODO:
 
 1) erlview should be parameterized in local.ini
 2) add to Makefile the copy of erlview.beam and
