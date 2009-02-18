@@ -451,6 +451,27 @@ entire_doc( Doc, {Key, all} ) ->
 
 
 
+entire_doc( Doc, without, {Key, all} ) ->
+    #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
+    Eb = element(1, Body) ,
+
+    Out = case lists:keysearch(Key, 1, Eb) 
+	      of {value, {Key,Vk}} -> 
+                                   [{     {[{<<"_id">>,Id}] 
+					   ++ [{<<"_rev">>,hd(Revs)}] 
+					   ++ Eb } }] ;
+
+	            false          -> 
+                                   [{ Vk, {[{<<"_id">>,Id}] 
+					   ++ [{<<"_rev">>,hd(Revs)}] 
+					   ++ Eb } }]
+	      end , 
+
+    Out
+. % entire_doc/3
+
+
+
 %% when add_fun is called, then map_doc gets called to run a view
 
 
