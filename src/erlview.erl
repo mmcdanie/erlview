@@ -451,6 +451,23 @@ entire_doc( Doc, {Key, all} ) ->
 
 
 
+% @doc
+% Used in map funs, finds documents NOT containing requested field, returns entire doc.
+%
+% used thusly from map funs ...
+%%
+%%<pre>
+%% fun(Doc) -> erlview:entire_doc( Doc,
+%%                                 without,
+%%                                 { &lt;&lt;"who"&gt;&gt;, all } ) 
+%% end.
+%%</pre
+%%
+% If Key is NOT found in Doc, returns entire doc.
+%
+% @spec entire_doc( Doc::doc(), without, {Key::key(), all} ) -> doc()
+%
+% @end
 entire_doc( Doc, without, {Key, all} ) ->
     #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
     Eb = element(1, Body) ,
