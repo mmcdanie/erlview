@@ -1,6 +1,7 @@
-head	1.35;
+head	1.36;
 access;
 symbols
+	r027:1.36
 	r026:1.35
 	r025:1.34
 	r024:1.33
@@ -27,9 +28,14 @@ symbols
 	nr002:1.9
 	nr001:1.8;
 locks
-	mmcdanie:1.35; strict;
+	mmcdanie:1.36; strict;
 comment	@# @;
 
+
+1.36
+date	2009.02.22.16.12.18;	author mmcdanie;	state Exp;
+branches;
+next	1.35;
 
 1.35
 date	2009.02.17.06.38.52;	author mmcdanie;	state Exp;
@@ -212,13 +218,16 @@ desc
 @
 
 
-1.35
+1.36
 log
-@refactored entire_doc/2
+@removed queue table; just shouldn't be needed; still don't know
+view name/content mixup
+need to ween off of RCS and learn how to do everything I want
+with git
 @
 text
 @%%%-------------------------------------------------------------------
-%%% File    : $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
+%%% File    : $Id: erlview.erl,v 1.35 2009/02/17 06:38:52 mmcdanie Exp mmcdanie $
 %
 %% @@doc erlview, an Erlang View Server for CouchDB
 %
@@ -255,6 +264,9 @@ text
 %%% Created : 24 Jan 2009 by mmcdanie <>
 %%
 %% $Log: erlview.erl,v $
+%% Revision 1.35  2009/02/17 06:38:52  mmcdanie
+%% refactored entire_doc/2
+%%
 %% Revision 1.34  2009/02/17 06:08:22  mmcdanie
 %% refactored find_all_content/2 ; cursory testing works same as before; NOTE that
 %% multiple entire_doc/2 work fine with name/views (no mixup); add a single
@@ -403,6 +415,10 @@ text
 -include("couch_db.hrl").
 %% #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}=Doc
 
+-author('Michael McDaniel dba Automated Systems, http://autosys.us').
+-copyright('2009 Michael McDaniel dba Automated Systems, http://autosys.us').
+-license('Apache 2.0, see the documentation').
+
 -define(SERVER, ?MODULE).
 -define(FUNTABLE, cdb_table).
 -define(QTABLE, erlview_queue).
@@ -414,7 +430,7 @@ text
 -export([start_link/0]).
 %% map fun helper funs
 -export([find_all_content/2, find_any_content/2]).
--export([find_all_fields/2, find_any_fields/2, entire_doc/2]).
+-export([find_all_fields/2, find_any_fields/2, entire_doc/2, entire_doc/3]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -663,6 +679,47 @@ entire_doc( Doc, {Key, all} ) ->
 
 
 
+% @@doc
+% Used in map funs, finds documents NOT containing requested field, returns entire doc.
+%
+% used thusly from map funs ...
+%%
+%%<pre>
+%% fun(Doc) -> erlview:entire_doc( Doc,
+%%                                 without,
+%%                                 { &lt;&lt;"who"&gt;&gt;, all } ) 
+%% end.
+%%</pre>
+%%
+% If Key is NOT found in Doc, returns entire doc.
+%
+% @@spec entire_doc( Doc::doc(), without, {Key::key(), all} ) -> doc()
+%
+% @@end
+entire_doc( Doc, without, {Key, all} ) ->
+    #doc{id=Id,deleted=_Del,body=Body,revs=Revs,meta=_Meta} = Doc ,
+    Eb = element(1, Body) ,
+
+    Not_key = "no " ++ binary_to_list(Key) ++ " field",
+    Key_not = list_to_binary(Not_key) ,
+
+    Out = case lists:keysearch(Key, 1, Eb) 
+	      of {value, {_Key,_Vk}} -> 
+                                   [{          {[{<<"_id">>,Id}] 
+						++ [{<<"_rev">>,hd(Revs)}] 
+						++ Eb } }] ;
+
+	            false          -> 
+                                   [{ Key_not, {[{<<"_id">>,Id}] 
+						++ [{<<"_rev">>,hd(Revs)}] 
+						++ Eb } }]
+	      end , 
+
+    Out
+. % entire_doc/3
+
+
+
 %% when add_fun is called, then map_doc gets called to run a view
 
 
@@ -682,9 +739,6 @@ entire_doc( Doc, {Key, all} ) ->
 init([]) ->
 %% io:fwrite("~n~n===> INIT~n~n",[]) ,
     ets:new(?FUNTABLE, [public, named_table]) ,
-    ets:new(?QTABLE, [public, named_table]) ,
-%%     ets:new(?FUNTABLE, [public, named_table, ordered_set]) ,
-%%     ets:new(?QTABLE, [public, named_table, ordered_set]) ,
 
     {ok, #state{fun_was="init"}}
 . % init/1
@@ -731,15 +785,15 @@ handle_call({prompt, [ H | T ] = _Data}, _From, State) ->
 %%   	<<"map_doc">> -> gen_server:call(?MODULE, {map_docs, T} )
      end
 ;
-handle_call({reset, _Data}, _From, State) ->
-    ?LOG([{reset, _Data}, _From, State]) ,
+handle_call({reset, _Data}, _From, _State) ->
+    ?LOG([{reset, _Data}, _From, _State]) ,
     erlang:garbage_collect() ,
     ets:match_delete(?FUNTABLE, '$1') ,
     R = #response{} ,
     {reply, R#response.success, #state{fun_was="reset"}}
 ;
-handle_call( {add_fun, BinFunctions}, _From, State ) ->
-    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, State]) ,
+handle_call( {add_fun, BinFunctions}, _From, _State ) ->
+    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
 %
 %% thanks to:
 %% http://erlang.org/pipermail/erlang-questions/2003-November/010544.html
@@ -799,39 +853,16 @@ handle_call( {add_fun, BinFunctions}, _From, State ) ->
 
 %handle_call/3  add_fun
 ;
-handle_call({map_doc, Doc} , _From , State) ->
-    List_of_funs = ets:tab2list(?FUNTABLE) ,
-
-%% TODO
-%% OK, here's the thing.  Let's say a list of funs is now in the ?QTABLE and
-%% they're running in the 'L = lists:map ...'.
-%% NOW, another new fun is add_fun'd and now handle_call( {map_doc...) gets
-%% called again.
-%% The NEW handle_call( {map_doc...) sees that the ?QTABLE is *not* empty
-%% so just pops off the remaining funs, and the newly add_fun'd fun never
-%% runs.  Right ?
-%% SO, maybe the thing to do is for add_fun to add the new (in the db) fun
-%% to the ?QTABLE itself, before it exits.  Then, the ?QTABLE will always
-%% have a new add_fun'd fun on it until a handle_call( {map_doc...) is called.
-
-
-    case ets:match(?QTABLE, '$1')
-	of []  -> ets:insert(?QTABLE, List_of_funs) ;
-	_      -> noop
-    end ,
-
-    Fun_list = ets:tab2list(?QTABLE) ,
-
-%%     L = lists:map( fun(Fa) -> G = binary_to_term( element(2, hd(Fa))) , 
+handle_call({map_doc, Doc} , _From , _State) ->
+    Fun_list = ets:tab2list(?FUNTABLE) ,
     L = lists:map( fun(Fa) -> G = binary_to_term( element(2, Fa)) , 
 			      try  (catch G(Doc))
 			      of {'EXIT', _}  -> exit(runtime_error_map_fun) ;
-			      Gx              -> ets:match_delete(?QTABLE, Fa), Gx
+			      Gx              -> Gx
 			      catch _:_       -> exit(runtime_error_map_fun) 
 			      end
 		   end ,
  		   Fun_list ) ,
-%%  		   List_of_funs ) ,
 
     {reply, L, #state{fun_was="map_doc"}}
 .%handle_call map_doc
@@ -880,8 +911,71 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 
-%% end $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
+%% end $Id: erlview.erl,v 1.35 2009/02/17 06:38:52 mmcdanie Exp mmcdanie $
 
+@
+
+
+1.35
+log
+@refactored entire_doc/2
+@
+text
+@d2 1
+a2 1
+%%% File    : $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
+d39 3
+d190 4
+d205 1
+a205 1
+-export([find_all_fields/2, find_any_fields/2, entire_doc/2]).
+d454 41
+a513 3
+    ets:new(?QTABLE, [public, named_table]) ,
+%%     ets:new(?FUNTABLE, [public, named_table, ordered_set]) ,
+%%     ets:new(?QTABLE, [public, named_table, ordered_set]) ,
+d560 2
+a561 2
+handle_call({reset, _Data}, _From, State) ->
+    ?LOG([{reset, _Data}, _From, State]) ,
+d567 2
+a568 2
+handle_call( {add_fun, BinFunctions}, _From, State ) ->
+    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, State]) ,
+d628 2
+a629 24
+handle_call({map_doc, Doc} , _From , State) ->
+    List_of_funs = ets:tab2list(?FUNTABLE) ,
+
+%% TODO
+%% OK, here's the thing.  Let's say a list of funs is now in the ?QTABLE and
+%% they're running in the 'L = lists:map ...'.
+%% NOW, another new fun is add_fun'd and now handle_call( {map_doc...) gets
+%% called again.
+%% The NEW handle_call( {map_doc...) sees that the ?QTABLE is *not* empty
+%% so just pops off the remaining funs, and the newly add_fun'd fun never
+%% runs.  Right ?
+%% SO, maybe the thing to do is for add_fun to add the new (in the db) fun
+%% to the ?QTABLE itself, before it exits.  Then, the ?QTABLE will always
+%% have a new add_fun'd fun on it until a handle_call( {map_doc...) is called.
+
+
+    case ets:match(?QTABLE, '$1')
+	of []  -> ets:insert(?QTABLE, List_of_funs) ;
+	_      -> noop
+    end ,
+
+    Fun_list = ets:tab2list(?QTABLE) ,
+
+%%     L = lists:map( fun(Fa) -> G = binary_to_term( element(2, hd(Fa))) , 
+d633 1
+a633 1
+			      Gx              -> ets:match_delete(?QTABLE, Fa), Gx
+a637 1
+%%  		   List_of_funs ) ,
+d686 1
+a686 1
+%% end $Id: erlview.erl,v 1.34 2009/02/17 06:08:22 mmcdanie Exp mmcdanie $
 @
 
 

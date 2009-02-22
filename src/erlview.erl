@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%%% File    : $Id: erlview.erl,v 1.35 2009/02/17 06:38:52 mmcdanie Exp mmcdanie $
+%%% File    : $Id: erlview.erl,v 1.36 2009/02/22 16:12:18 mmcdanie Exp mmcdanie $
 %
 %% @doc erlview, an Erlang View Server for CouchDB
 %
@@ -36,6 +36,12 @@
 %%% Created : 24 Jan 2009 by mmcdanie <>
 %%
 %% $Log: erlview.erl,v $
+%% Revision 1.36  2009/02/22 16:12:18  mmcdanie
+%% removed queue table; just shouldn't be needed; still don't know
+%% view name/content mixup
+%% need to ween off of RCS and learn how to do everything I want
+%% with git
+%%
 %% Revision 1.35  2009/02/17 06:38:52  mmcdanie
 %% refactored entire_doc/2
 %%
@@ -461,7 +467,7 @@ entire_doc( Doc, {Key, all} ) ->
 %%                                 without,
 %%                                 { &lt;&lt;"who"&gt;&gt;, all } ) 
 %% end.
-%%</pre
+%%</pre>
 %%
 % If Key is NOT found in Doc, returns entire doc.
 %
@@ -511,9 +517,6 @@ entire_doc( Doc, without, {Key, all} ) ->
 init([]) ->
 %% io:fwrite("~n~n===> INIT~n~n",[]) ,
     ets:new(?FUNTABLE, [public, named_table]) ,
-    ets:new(?QTABLE, [public, named_table]) ,
-%%     ets:new(?FUNTABLE, [public, named_table, ordered_set]) ,
-%%     ets:new(?QTABLE, [public, named_table, ordered_set]) ,
 
     {ok, #state{fun_was="init"}}
 . % init/1
@@ -629,38 +632,15 @@ handle_call( {add_fun, BinFunctions}, _From, _State ) ->
 %handle_call/3  add_fun
 ;
 handle_call({map_doc, Doc} , _From , _State) ->
-    List_of_funs = ets:tab2list(?FUNTABLE) ,
-
-%% TODO
-%% OK, here's the thing.  Let's say a list of funs is now in the ?QTABLE and
-%% they're running in the 'L = lists:map ...'.
-%% NOW, another new fun is add_fun'd and now handle_call( {map_doc...) gets
-%% called again.
-%% The NEW handle_call( {map_doc...) sees that the ?QTABLE is *not* empty
-%% so just pops off the remaining funs, and the newly add_fun'd fun never
-%% runs.  Right ?
-%% SO, maybe the thing to do is for add_fun to add the new (in the db) fun
-%% to the ?QTABLE itself, before it exits.  Then, the ?QTABLE will always
-%% have a new add_fun'd fun on it until a handle_call( {map_doc...) is called.
-
-
-    case ets:match(?QTABLE, '$1')
-	of []  -> ets:insert(?QTABLE, List_of_funs) ;
-	_      -> noop
-    end ,
-
-    Fun_list = ets:tab2list(?QTABLE) ,
-
-%%     L = lists:map( fun(Fa) -> G = binary_to_term( element(2, hd(Fa))) , 
+    Fun_list = ets:tab2list(?FUNTABLE) ,
     L = lists:map( fun(Fa) -> G = binary_to_term( element(2, Fa)) , 
 			      try  (catch G(Doc))
 			      of {'EXIT', _}  -> exit(runtime_error_map_fun) ;
-			      Gx              -> ets:match_delete(?QTABLE, Fa), Gx
+			      Gx              -> Gx
 			      catch _:_       -> exit(runtime_error_map_fun) 
 			      end
 		   end ,
  		   Fun_list ) ,
-%%  		   List_of_funs ) ,
 
     {reply, L, #state{fun_was="map_doc"}}
 .%handle_call map_doc
@@ -709,5 +689,5 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 
-%% end $Id: erlview.erl,v 1.35 2009/02/17 06:38:52 mmcdanie Exp mmcdanie $
+%% end $Id: erlview.erl,v 1.36 2009/02/22 16:12:18 mmcdanie Exp mmcdanie $
 
