@@ -26,9 +26,11 @@
 %%
 %% 
 %%
-%% @type key_pairs(). List of {field, content} where field::binary() and content::binary() describe document field names or field contents.
+%% @type key_pairs(). list( {field, content} )  where field::binary() 
+%%  and content::binary() describe document field names or field contents.
 %%
-%% @type fields(). List of field names where field::binary() describes a document field name.
+%% @type fields(). list( field )  where field::binary() describes a document
+%%  field name.
 %%
 %% @end
 %%
@@ -226,6 +228,9 @@
 %% Function: start_link() -> {ok,Pid} | ignore | {error,Error}
 %% Description: Starts the server
 %%--------------------------------------------------------------------
+%%@doc
+%%@private
+%%@end
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
@@ -305,14 +310,15 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
     Out = 
   	case is_true(Truth_list)
  	    of true -> Vk = element(2, hd(Key_pairs)) ,
-                       Out_Fields = lists:map( 
-				      fun(K) -> 
-					      case lists:keysearch(K, 1, Eb) of
-						  {value, V} -> V ;
-						  _          -> []
-					      end
-				      end,
-				      Out_fields ) ,
+                       Out_Fields = 
+			   lists:map( 
+			     fun(K) -> 
+				     case lists:keysearch(K, 1, Eb) of
+					 {value, V} -> V ;
+					 _          -> {<<"">>,<<"">>}
+				     end
+			     end,
+			     Out_fields ) ,
 
                        [{ Vk, {[{<<"_id">>,Id}] 
 			       ++ [{<<"_rev">>,hd(Revs)}] 
@@ -379,16 +385,17 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 
     Eb = element(1, Body) ,
     Vk = hd(Keys) ,
-    Fields = lists:map( fun(K) -> 
-				case lists:keysearch(K, 1, Eb) of
-				    {value, V} -> V ;
-				    _          -> []
-				end
-			end,
-			Out_fields ) ,
+    Fields = lists:map( 
+	       fun(K) -> 
+		       case lists:keysearch(K, 1, Eb) of
+			   {value, V} -> V ;
+			   _          -> {<<"">>,<<"">>}
+		       end
+	       end,
+	       Out_fields ) ,
 
-						% do all Keys match some 
-						% Body field ; Match == true/false
+						% do all Keys match some Body
+						% field ?
     Truth_list = lists:map(fun(K) -> 
 				   lists:map( 
 				     fun(Bt) -> K == element(1,Bt) end, 
@@ -429,8 +436,12 @@ is_true(Truth_list) ->
 %
 % used thusly from map funs ...
 %
-% fun(Doc) -> erlview:entire_doc( Doc, { &lt;&lt;"who"&gt;&gt;, all } ) end.
-%
+%<pre>
+% fun(Doc) -> 
+%    erlview:entire_doc( Doc, 
+%                        { &lt;&lt;"who"&gt;&gt;, all } ) 
+% end.
+%</pre>
 % If Key is found in Doc, returns entire doc.
 %
 % @spec entire_doc( Doc::doc(), {Key::key(), all} ) -> doc()
@@ -514,6 +525,9 @@ entire_doc( Doc, without, {Key, all} ) ->
 %%                         {stop, Reason}
 %% Description: Initiates the server
 %%--------------------------------------------------------------------
+%%@doc
+%%@private
+%%@end
 init([]) ->
 %% io:fwrite("~n~n===> INIT~n~n",[]) ,
     ets:new(?FUNTABLE, [public, named_table]) ,
@@ -544,7 +558,9 @@ init([]) ->
 %% [ H | T ] = [<<"add_fun">>,<<"function(doc) {\n  emit(null, doc);\n}">>]
 %% H = <<"add_fun">> ,
 %% T = <<"function(doc) {\n  emit(null, doc);\n}">> ,
-%
+%%@doc
+%%@private
+%%@end
 handle_call({prompt, [ H | T ] = _Data}, _From, State) ->
     ?LOG([{?MODULE, prompt, _Data}, _From, State]) ,
 
@@ -595,22 +611,8 @@ handle_call( {add_fun, BinFunctions}, _From, _State ) ->
 		      {value, Fun, _} = erl_eval:expr(Form, Bindings) ,
 
 						% ets overwrites identical records
-%% I test by deleting _design/erl doc in db, compact db,
-%% 'rm ... .test_design/erl.view', restart CDB
-
-%% using the Fcrypt, name/views are mixed but entire_doc(who/when/what/note) all
-%% work (only tested by entering each correctly first time in that order)
-%
-% THIS JUST WORKED CORRECTLY all who/when/what/note AFTER I DROPPED the 
-% ordered_set option on both ets tables
      		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
      		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
-
-%% using the Key, name/views are mixed but entire_doc(who/when/what/note) do not
-%% all work (only tested by entering each correctly first time in that order, 
-%% and the note one didn't work, no ouput, and then when/what had same what
-%% output, there was no note output at all)
-%
 %%     		      Key = calendar:datetime_to_gregorian_seconds({date(),time()}),
 %%     		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun)}) 
 
@@ -654,6 +656,9 @@ handle_call({map_doc, Doc} , _From , _State) ->
 %%                                      {stop, Reason, State}
 %% Description: Handling cast messages
 %%--------------------------------------------------------------------
+%%@doc
+%%@private
+%%@end
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
@@ -663,6 +668,9 @@ handle_cast(_Msg, State) ->
 %%                                       {stop, Reason, State}
 %% Description: Handling all non call/cast messages
 %%--------------------------------------------------------------------
+%%@doc
+%%@private
+%%@end
 handle_info(_Info, State) ->
     {noreply, State}.
 
@@ -673,6 +681,9 @@ handle_info(_Info, State) ->
 %% cleaning up. When it returns, the gen_server terminates with Reason.
 %% The return value is ignored.
 %%--------------------------------------------------------------------
+%%@doc
+%%@private
+%%@end
 terminate(_Reason, _State) ->
     ok.
 
@@ -680,6 +691,9 @@ terminate(_Reason, _State) ->
 %% Func: code_change(OldVsn, State, Extra) -> {ok, NewState}
 %% Description: Convert process state when code is changed
 %%--------------------------------------------------------------------
+%%@doc
+%%@private
+%%@end
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
