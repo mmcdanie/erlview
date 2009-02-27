@@ -244,7 +244,7 @@ start_link() ->
 %% Used in map funs, finds documents having any of the requested content, NOT IMPLEMENTED
 %%
 %%<pre>
-%% returns docs containing a foo of "new", and myid of "123"
+%% returns docs containing a foo of "new", or myid of "123"
 %% and returns fields myid,who,when
 %% fun(Doc) -> erlview:find_any_content(Doc,
 %%                          {[ {&lt;&lt;"foo"&gt;&gt;, &lt;&lt;"new"&gt;&gt;}, 
@@ -324,10 +324,7 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 			       ++ [{<<"_rev">>,hd(Revs)}] 
 			       ++ Out_Fields } }] ;
 				 
- 	     false  ->
-                       [{     {[{<<"_id">>,Id}] 
-			       ++ [{<<"_rev">>,hd(Revs)}] 
-			       ++ Body } }] 
+ 	     false  -> []
 	end ,
 
     Out
@@ -408,10 +405,7 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 		   [{ Vk, {[{<<"_id">>,Id}] 
 			   ++ [{<<"_rev">>,hd(Revs)}] 
 			   ++ Fields } }] ;
-	       _       -> 
-		   [{     {[{<<"_id">>,Id}] 
-			   ++ [{<<"_rev">>,hd(Revs)}] 
-			   ++ Body } }]
+	       _       -> []
 	   end , 
 
     Out
@@ -452,10 +446,7 @@ entire_doc( Doc, {Key, all} ) ->
     Eb = element(1, Body) ,
 
     Out = case lists:keysearch(Key, 1, Eb) 
-	      of false          -> 
-                                   [{     {[{<<"_id">>,Id}] 
-					   ++ [{<<"_rev">>,hd(Revs)}] 
-					   ++ Eb } }] ;
+	      of false          -> [] ;
 
 	      {value, {Key,Vk}} -> 
                                    [{ Vk, {[{<<"_id">>,Id}] 
@@ -498,10 +489,7 @@ entire_doc( Doc, without, {Key, all} ) ->
 						++ [{<<"_rev">>,hd(Revs)}] 
 						++ Eb } }] ;
 
-	            false          -> 
-                                   [{ Key_not, {[{<<"_id">>,Id}] 
-						++ [{<<"_rev">>,hd(Revs)}] 
-						++ Eb } }]
+	            false          -> []
 	      end , 
 
     Out
@@ -529,8 +517,7 @@ entire_doc( Doc, without, {Key, all} ) ->
 %%@private
 %%@end
 init([]) ->
-%% io:fwrite("~n~n===> INIT~n~n",[]) ,
-    ets:new(?FUNTABLE, [public, named_table]) ,
+    ets:new(?FUNTABLE, [public, named_table, ordered_set]) ,
 
     {ok, #state{fun_was="init"}}
 . % init/1
@@ -611,10 +598,11 @@ handle_call( {add_fun, BinFunctions}, _From, _State ) ->
 		      {value, Fun, _} = erl_eval:expr(Form, Bindings) ,
 
 						% ets overwrites identical records
-     		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
-     		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
-%%     		      Key = calendar:datetime_to_gregorian_seconds({date(),time()}),
-%%     		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun)}) 
+						% if table is set or ordered_set
+%%      		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
+%%      		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
+     		      Key = calendar:datetime_to_gregorian_seconds({date(),time()}),
+     		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun)}) 
 
 		  of true        -> R#response.success ;
 

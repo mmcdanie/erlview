@@ -30,15 +30,6 @@ stop() ->
     exit(whereis(couch_query_servers), close).
 
 
-%%  start_doc_map(<<"erlang">>, Functions) ->
-%%      Pid = erlang:whereis(erlview) ,      % parameterize erlview ; this Pid gets
-%%  					 % fed to map_docs
-%%      lists:foreach(fun(FunctionSource) ->
-%%  			  true = couch_os_process:prompt(Pid, [<<"add_fun">>, 
-%%  							       FunctionSource])
-%%  		  end, Functions),
-%%      {ok, {<<"erlang">>, Pid}}
-%%  ;
 start_doc_map(Lang, Functions) ->
 
     Pid = get_os_process(Lang),
