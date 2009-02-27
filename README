@@ -128,4 +128,4 @@ map_docs({<<"erlang">>, Pid}, Docs) ->
 6) This note intentionally left blank (but, from a meta-level, is it?).
 
 
-%% end $Id: README,v 1.3 2009/02/16 04:42:11 mmcdanie Exp mmcdanie $
+%% end $Id: README,v 1.4 2009/02/27 00:46:41 mmcdanie Exp mmcdanie $

@@ -1,10 +1,15 @@
-head	1.3;
+head	1.4;
 access;
 symbols;
 locks
-	mmcdanie:1.3; strict;
+	mmcdanie:1.4; strict;
 comment	@# @;
 
+
+1.4
+date	2009.02.27.00.46.41;	author mmcdanie;	state Exp;
+branches;
+next	1.3;
 
 1.3
 date	2009.02.16.04.42.11;	author mmcdanie;	state Exp;
@@ -26,7 +31,7 @@ desc
 @@
 
 
-1.3
+1.4
 log
 @*** empty log message ***
 @
@@ -61,6 +66,9 @@ I currently manually copy {erlview, couch_query_servers}.beam to
 
 6) Makefile could use some improving (e.g. doc target instead of just making it)
 
+7) Maybe modify couch_query_servers.erl so that map_docs/2 sent a list of
+   docs rather than a single doc.  That way, handle_call( {map_doc ... )
+   in erlview could run parallel funs.  
 
 ---
 
@@ -72,6 +80,14 @@ KNOWN BUGS:
    mixed up.  If you go change the offending map fun so as to force a 
    runtime failure that will usually straighten things out (then correct
    the map fun).  Otherwise you may need to start/stop CouchDB.
+
+   Note also: I thought I had the general case of 'view name'/contents
+              mixup resolved.  Though I had only tested that whilst
+              using entire_doc/2 in the map funs.  I now see that with
+              only two map funs (though using find_all_content/2) the
+              'view name'/contents are reversed.  I have no idea at
+              the moment why using a different helper fun would have
+              any effect at all on this problem.
 
 2) Helper funs have not been thoroughly tested.
 
@@ -150,6 +166,18 @@ map_docs({<<"erlang">>, Pid}, Docs) ->
 6) This note intentionally left blank (but, from a meta-level, is it?).
 
 
+%% end $Id: README,v 1.3 2009/02/16 04:42:11 mmcdanie Exp mmcdanie $@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@d31 3
+d46 8
+d131 1
+a131 1
 %% end $Id: README,v 1.2 2009/02/16 03:52:16 mmcdanie Exp mmcdanie $@
 
 
