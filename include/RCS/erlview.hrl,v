@@ -1,4 +1,4 @@
-head	1.5;
+head	1.6;
 access;
 symbols
 	r024:1.5
@@ -7,9 +7,14 @@ symbols
 	nr002:1.3
 	nr001:1.2;
 locks
-	mmcdanie:1.5; strict;
+	mmcdanie:1.6; strict;
 comment	@# @;
 
+
+1.6
+date	2009.02.27.00.49.26;	author mmcdanie;	state Exp;
+branches;
+next	1.5;
 
 1.5
 date	2009.02.16.04.01.54;	author mmcdanie;	state Exp;
@@ -41,12 +46,13 @@ desc
 @@
 
 
-1.5
+1.6
 log
 @*** empty log message ***
 @
 text
-@
+@%% for erlview.erl
+%%
 -ifndef(STATE).
 -define(STATE, 1).
 
@@ -69,6 +75,20 @@ text
 -else.
 -endif.
 
+%% end $Id: erlview.hrl,v 1.5 2009/02/16 04:01:54 mmcdanie Exp mmcdanie $
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d1 2
+a2 1
+
+d25 1
+a25 1
 %% end $Id: erlview.hrl,v 1.4 2009/02/09 02:28:18 mmcdanie Exp mmcdanie $
 @
 
