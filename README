@@ -41,17 +41,19 @@ KNOWN BUGS:
 1) If your map funs don't run properly the view name and contents can get
    mixed up.  If you go change the offending map fun so as to force a 
    runtime failure that will usually straighten things out (then correct
-   the map fun).  Otherwise you may need to start/stop CouchDB.
+   the map fun).  Otherwise you may need to start/stop CouchDB.  Or send
+   a reset (e.g. curl  -X POST --header "Content-Type: application/erlang" \
+                 http://your.server:5984/daptest/_slow_view/reset)
 
-   Note also: I thought I had the general case of 'view name'/contents
-              mixup resolved.  Though I had only tested that whilst
-              using entire_doc/2 in the map funs.  I now see that with
-              only two map funs (though using find_all_content/2) the
-              'view name'/contents are reversed.  I have no idea at
-              the moment why using a different helper fun would have
-              any effect at all on this problem.
+2) Still getting the problem of  'view name'/contents mixed up.  Sometimes
+   adding only two map funs (I'm using Futon) will cause the name and 
+   contents to be reversed.  Though sometimes I can get three or four
+   map funs entered and they'll be ok.  Or maybe a couple will be reversed.
 
-2) Helper funs have not been thoroughly tested.
+   The above is in reference, of course, to multiple map funs in a single
+   design document.
+
+3) Helper funs have not been thoroughly tested.
 
 
 ---
