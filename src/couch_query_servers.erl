@@ -18,7 +18,9 @@
 -export([init/1, terminate/2, handle_call/3, handle_cast/2, handle_info/2,code_change/3,stop/0]).
 -export([start_doc_map/2, map_docs/2, stop_doc_map/1]).
 -export([reduce/3, rereduce/3,validate_doc_update/5]).
--export([render_doc_show/5,start_view_list/2,render_list_head/5, render_list_row/4, render_list_tail/3]).
+-export([render_doc_show/6,start_view_list/2,render_list_head/5, 
+        render_list_row/4, render_list_tail/3, render_reduce_head/3, 
+        render_reduce_row/4]).
 % -export([test/0]).
 
 -include("couch_db.hrl").
@@ -29,32 +31,27 @@ start_link() ->
 stop() ->
     exit(whereis(couch_query_servers), close).
 
-
 start_doc_map(Lang, Functions) ->
-
     Pid = get_os_process(Lang),
-    
     lists:foreach(fun(FunctionSource) ->
-	  true = couch_os_process:prompt(Pid, [<<"add_fun">>, FunctionSource])
+        true = couch_os_process:prompt(Pid, [<<"add_fun">>, FunctionSource])
     end, Functions),
-
     {ok, {Lang, Pid}}.
-
 
 
 % Pid comes from start_doc_map/2 (see call in couch_view_updater)
 map_docs({<<"erlang">>, Pid}, Docs) ->
     Results = lists:map( fun( Doc ) ->
-		       couch_os_process:prompt(Pid, [<<"map_doc">>, Doc])
-	       end,
-	       Docs) ,
+                       couch_os_process:prompt(Pid, [<<"map_doc">>, Doc])
+               end,
+               Docs) ,
     {ok, Results}
 ;
 map_docs({_Lang, Pid}, Docs) ->
     % send the documents
-    Results = lists:map( 
+    Results = lists:map(
         fun(Doc) ->
-	      Json = couch_doc:to_json_obj(Doc, []),
+            Json = couch_doc:to_json_obj(Doc, []),
             
             FunsResults = couch_os_process:prompt(Pid, [<<"map_doc">>, Json]),
             % the results are a json array of function map yields like this:
@@ -63,18 +60,14 @@ map_docs({_Lang, Pid}, Docs) ->
             % [[Key1, Value1], [Key2, Value2]]
             % Convert the key, value pairs to tuples like
             % [{Key1, Value1}, {Key2, Value2}]
-            lists:map( 
+            lists:map(
                 fun(FunRs) ->
                     [list_to_tuple(FunResult) || FunResult <- FunRs]
-		end,
-	      FunsResults) 
-	  end,
-	  Docs) ,
-{ok,Io} = file:open("/tmp/who", [append]) ,
-io:fwrite(Io, "~p~n---~n", [Results]) ,
-file:close(Io) ,
-    {ok, Results}
-.
+                end,
+            FunsResults)
+        end,
+        Docs),
+    {ok, Results}.
 
 
 stop_doc_map(nil) ->
@@ -140,14 +133,18 @@ validate_doc_update(Lang, FunSrc, EditDoc, DiskDoc, Ctx) ->
     after
         ok = ret_os_process(Lang, Pid)
     end.
+append_docid(DocId, JsonReqIn) ->
+    [{<<"docId">>, DocId} | JsonReqIn].
 
-render_doc_show(Lang, ShowSrc, Doc, Req, Db) ->
+render_doc_show(Lang, ShowSrc, DocId, Doc, Req, Db) ->
     Pid = get_os_process(Lang),
-    JsonDoc = case Doc of
-        nil -> null;
-        _ -> couch_doc:to_json_obj(Doc, [revs])
+    {JsonReqIn} = couch_httpd_external:json_req_obj(Req, Db),
+
+    {JsonReq, JsonDoc} = case {DocId, Doc} of
+        {nil, nil} -> {{JsonReqIn}, null};
+        {DocId, nil} -> {{append_docid(DocId, JsonReqIn)}, null};
+        _ -> {{append_docid(DocId, JsonReqIn)}, couch_doc:to_json_obj(Doc, [revs])}
     end,
-    JsonReq = couch_httpd_external:json_req_obj(Req, Db),
     try couch_os_process:prompt(Pid, 
         [<<"show_doc">>, ShowSrc, JsonDoc, JsonReq]) of
     FormResp ->
@@ -178,6 +175,16 @@ render_list_tail({Lang, Pid}, Req, Db) ->
     JsonResp.
     
     
+render_reduce_head({_Lang, Pid}, Req, Db) ->
+    Head = {[]},
+    JsonReq = couch_httpd_external:json_req_obj(Req, Db),
+    couch_os_process:prompt(Pid, [<<"list_begin">>, Head, JsonReq]).
+
+render_reduce_row({_Lang, Pid}, Req, Db, {Key, Value}) ->
+    JsonRow = {[{key, Key}, {value, Value}]},
+    JsonReq = couch_httpd_external:json_req_obj(Req, Db),
+    couch_os_process:prompt(Pid, [<<"list_row">>, JsonRow, JsonReq]).
+
 
 init([]) ->
     
@@ -263,10 +270,10 @@ new_process(Langs, Lang) ->
 
 get_os_process(Lang) ->
      case Lang 
- 	of <<"erlang">> -> erlang:whereis(erlview) ;
- 	    _           ->
-	     gen_server:call(couch_query_servers, {get_proc, Lang})
- 	   end
+        of <<"erlang">> -> erlang:whereis(erlview) ;
+            _           ->
+             gen_server:call(couch_query_servers, {get_proc, Lang})
+           end
 .
 
 ret_os_process(Lang, Pid) ->
