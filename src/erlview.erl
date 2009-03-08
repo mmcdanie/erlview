@@ -324,7 +324,7 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 			       ++ [{<<"_rev">>,hd(Revs)}] 
 			       ++ Out_Fields } }] ;
 				 
- 	     false  -> []
+ 	     false  -> Out_Fields = []
 	end ,
 
     Out
@@ -414,6 +414,7 @@ find_all_fields( Doc, {Keys, Out_fields} ) ->
 
 
 % [ [true,false,false], [false,false,false,true] ]
+% each sublist must have at least one 'true' element for is_true to return true
 is_true(Truth_list) ->
  case  lists:all( fun(T) -> 
 			  lists:member(true,T) 
@@ -485,7 +486,7 @@ entire_doc( Doc, without, {Key, all} ) ->
 
     Out = case lists:keysearch(Key, 1, Eb) 
 	      of {value, {_Key,_Vk}} -> 
-                                   [{          {[{<<"_id">>,Id}] 
+                                   [{ Key_not,  {[{<<"_id">>,Id}] 
 						++ [{<<"_rev">>,hd(Revs)}] 
 						++ Eb } }] ;
 
@@ -548,32 +549,16 @@ init([]) ->
 %%@doc
 %%@private
 %%@end
-handle_call({prompt, [ H | T ] = _Data}, _From, State) ->
-    ?LOG([{?MODULE, prompt, _Data}, _From, State]) ,
 
-    case H of
-	<<"add_fun">> -> handle_call( {add_fun, T}, _From, State  )  ;
-	<<"map_doc">> -> handle_call( {map_doc, hd(T)}, _From, State ) ;
-	<<"reset">>   -> handle_call( {reset, x}, _From, State )
-%%                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-%% need to call handle_call/3 directly 
-%%
-%% cannot "layer" gen_server:calls as below,
-%% caller of initiating gen_server:call(erlview, {prompt, Data})
-%% receives a timeout when doing the below
-%%
-%%   	<<"add_fun">> -> gen_server:call(?MODULE, {add_fun, T} ) ;
-%%   	<<"map_doc">> -> gen_server:call(?MODULE, {map_docs, T} )
-     end
-;
+
 handle_call({reset, _Data}, _From, _State) ->
     ?LOG([{reset, _Data}, _From, _State]) ,
     erlang:garbage_collect() ,
-    ets:match_delete(?FUNTABLE, '$1') ,
+%%     ets:match_delete(?FUNTABLE, '$1') ,
     R = #response{} ,
     {reply, R#response.success, #state{fun_was="reset"}}
 ;
-handle_call( {add_fun, BinFunctions}, _From, _State ) ->
+handle_call( {prompt, [<<"add_fun">> , BinFunctions]}, _From, _State ) ->
     ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
 %
 %% thanks to:
@@ -584,14 +569,17 @@ handle_call( {add_fun, BinFunctions}, _From, _State ) ->
 %%      Worthwhile to put some good feedback in the
 %%      funs so when they fail I can figure out why.
 
+						% BinFunctions are funs CDB knows
+						% about, clear out the old one
+%%     handle_call({reset, reset}, self(), #state{fun_was="add_fun"}) ,
+
     R = #response{} ,
-    
     Reply =
 	lists:foldl(
 	  fun(BinFunction, Acc) ->
 		  Acc ,
 		  try
-		      FunStr = binary_to_list( BinFunction ) ,
+		      FunStr = binary_to_list( BinFunction ) , 
 		      {ok, Tokens, _} = erl_scan:string(FunStr) ,
 		      {ok, [Form]} = erl_parse:parse_exprs(Tokens) ,
 		      Bindings = erl_eval:new_bindings() ,
@@ -602,7 +590,7 @@ handle_call( {add_fun, BinFunctions}, _From, _State ) ->
 %%      		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
 %%      		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
      		      Key = calendar:datetime_to_gregorian_seconds({date(),time()}),
-     		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun)}) 
+     		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun),BinFunction}) 
 
 		  of true        -> R#response.success ;
 
@@ -615,13 +603,14 @@ handle_call( {add_fun, BinFunctions}, _From, _State ) ->
 		  end 
 	  end, 
 	  "", 
-	  BinFunctions ) ,
+	  case is_list(BinFunctions) of true -> BinFunctions;
+	                               false -> [BinFunctions] end ) ,
 
     {reply, Reply, #state{fun_was="add_fun"}}
 
 %handle_call/3  add_fun
 ;
-handle_call({map_doc, Doc} , _From , _State) ->
+handle_call({prompt, [<<"map_doc">> , Doc]} , _From , _State) ->
     Fun_list = ets:tab2list(?FUNTABLE) ,
     L = lists:map( fun(Fa) -> G = binary_to_term( element(2, Fa)) , 
 			      try  (catch G(Doc))
@@ -631,6 +620,31 @@ handle_call({map_doc, Doc} , _From , _State) ->
 			      end
 		   end ,
  		   Fun_list ) ,
+%% {timeout,{gen_server,call,
+%%                      [<0.52.0>,
+%%                       {prompt,[<<"map_doc">>,
+%%                                {doc,<<"22332c0c775bb961d171ac8d19b2993d">>,
+%%                                     [<<"2482144364">>],
+%%                                     {[{<<"createTime">>,
+%%                                        <<"2007-04-08 12:11:01">>},
+%%                                       {<<"name">>,<<"Hospital Mean Chey">>},
+%%                                       {<<"notes">>,<<"Public Hospital">>},
+%%                                       {<<"street1">>,<<"Street 361">>},
+%%                                       {<<"city">>,<<"Phnom Penh">>},
+%%                                       {<<"postalCode">>,<<"12355">>},
+%%                                       {<<"country">>,<<"Cambodia">>},
+%%                                       {<<"telephoneNumber1">>,
+%%                                        <<"Cell: 012-937-677">>},
+%%                                       {<<"telephoneNumber2">>,
+%%                                        <<"Cell: 012-858-251">>},
+%%                                       {<<"telephoneNumber2">>,
+%%                                        <<"Cell: 012-864-684">>},
+%%                                       {<<"category">>,<<"Hospital">>},
+%%                                       {<<"creatorsName">>,<<"admin">>}]},
+%%                                     [],false,[]}]}]}}
+
+%% problem need [single_view] and [one_view, two_view] but getting
+%% [ [one_view], [two_view] ] so figure out where to add [] one time
 
     {reply, L, #state{fun_was="map_doc"}}
 .%handle_call map_doc
@@ -689,7 +703,24 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%--------------------------------------------------------------------
 
-
+%% map fun
+%% fun(Doc) ->
+%%  erlview:find_all_content(
+%%             Doc,
+%%             { [{<<"state">>,<<"OR">>}],
+%%               [ <<"category">>,
+%%                 <<"website">>,
+%%                 <<"city">>,
+%%                 <<"country">>,
+%%                 <<"createTime">>,
+%%                 <<"creatorsName">>,
+%%                 <<"name">>,
+%%                 <<"postalCode">>,
+%%                 <<"state">>,
+%%                 <<"street1">>,
+%%                 <<"telephoneNumber1">> ]
+%%              } )
+%% end.
 
 %% end $Id: erlview.erl,v 1.36 2009/02/22 16:12:18 mmcdanie Exp mmcdanie $
 
