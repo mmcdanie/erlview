@@ -21,6 +21,7 @@ I currently manually copy {erlview, couch_query_servers}.beam to
 4) Write reduce fun(s).
 
 
+DONE, I put examples in the html docs.
 5) Write end-user docs on how to write map funs, and how to use the
    individual helper funs.  I have started writing inline docs in
    the code so during 'make', the html docs get made.
@@ -53,7 +54,10 @@ KNOWN BUGS:
    The above is in reference, of course, to multiple map funs in a single
    design document.
 
-3) Helper funs have not been thoroughly tested.
+3) Helper funs have not been thoroughly tested.  They seem to work correctly
+   for each goal, just not stringently tested against known output.  I 
+   have run javascript map funs for same outputs and the output document
+   counts have been same (and spot checking looked correct as well).
 
 
 ---
@@ -68,7 +72,7 @@ NOTES:
    http://github.com so you can get it and fix or add whatever
    you want.
 
-2) When running eunit:test(erlview, [verbose]), all 10 tests run
+2) When running eunit:test(erlview, [verbose]), all 9 tests run
    successfully.  Don't let the SASL "=ERROR REPORT= ..." throw you.
    They are proper behaviour to the correct crash of certain funs.
 

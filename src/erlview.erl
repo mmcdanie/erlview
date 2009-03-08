@@ -54,15 +54,6 @@
 %% Need more testing around this but, on test server I saw mixups with
 %% entire_doc/2 map funs also.
 %%
-%% Revision 1.33  2009/02/16 04:06:25  mmcdanie
-%% *** empty log message ***
-%%
-%% Revision 1.32  2009/02/16 03:59:18  mmcdanie
-%% *** empty log message ***
-%%
-%% Revision 1.31  2009/02/16 03:52:40  mmcdanie
-%% *** empty log message ***
-%%
 %% Revision 1.30  2009/02/15 18:03:25  mmcdanie
 %% just worked correctly with entire_doc( ... who/when/what/note ... ) 
 %% and name/view matched fine.  
@@ -324,7 +315,7 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 			       ++ [{<<"_rev">>,hd(Revs)}] 
 			       ++ Out_Fields } }] ;
 				 
- 	     false  -> Out_Fields = []
+ 	     false  -> []
 	end ,
 
     Out
@@ -424,6 +415,7 @@ is_true(Truth_list) ->
      false   -> false
  end
 .    
+
 
 
 % @doc
@@ -554,12 +546,11 @@ init([]) ->
 handle_call({reset, _Data}, _From, _State) ->
     ?LOG([{reset, _Data}, _From, _State]) ,
     erlang:garbage_collect() ,
-%%     ets:match_delete(?FUNTABLE, '$1') ,
     R = #response{} ,
     {reply, R#response.success, #state{fun_was="reset"}}
 ;
-handle_call( {prompt, [<<"add_fun">> , BinFunctions]}, _From, _State ) ->
-    ?LOG([{?MODULE, add_fun, BinFunctions}, _From, _State]) ,
+handle_call( {prompt, [<<"add_fun">> , BinFunc]}, _From, _State ) ->
+    ?LOG([{?MODULE, <<"add_fun">>, BinFunc}, _From, _State]) ,
 %
 %% thanks to:
 %% http://erlang.org/pipermail/erlang-questions/2003-November/010544.html
@@ -572,6 +563,8 @@ handle_call( {prompt, [<<"add_fun">> , BinFunctions]}, _From, _State ) ->
 						% BinFunctions are funs CDB knows
 						% about, clear out the old one
 %%     handle_call({reset, reset}, self(), #state{fun_was="add_fun"}) ,
+
+ BinFunctions = case is_list(BinFunc) of true -> BinFunc; _ -> [BinFunc] end ,
 
     R = #response{} ,
     Reply =
@@ -587,10 +580,25 @@ handle_call( {prompt, [<<"add_fun">> , BinFunctions]}, _From, _State ) ->
 
 						% ets overwrites identical records
 						% if table is set or ordered_set
-%%      		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
-%%      		      ets:insert(?FUNTABLE,{Fcrypt,term_to_binary(Fun)}) 
-     		      Key = calendar:datetime_to_gregorian_seconds({date(),time()}),
-     		      ets:insert(?FUNTABLE,{Key,term_to_binary(Fun),BinFunction}) 
+						% this is what I want but problem
+						% is then the order is messed up
+						% WRT Futon map fun names.  So,
+						% I want order per add_fun entry
+						% of fun but I need every entry
+						% to be unique; I'm gonna have to
+						% write a special insert fun to
+						% check Fcrypt for unique but use
+						% Key for ordering
+      		      Fcrypt = crypto:sha( term_to_binary(Tokens) ) ,    
+		      Key = calendar:datetime_to_gregorian_seconds({date(),time()}),
+		      case ets:match(?FUNTABLE, {'$1', '$2', Fcrypt, '$4'}) 
+			  of [] ->
+			      ets:insert(?FUNTABLE,{Key, 
+						    term_to_binary(Fun),
+						    Fcrypt,
+						    BinFunction}) ;
+			  _Any  -> do_not_add_same_fun, true
+		      end
 
 		  of true        -> R#response.success ;
 
@@ -603,8 +611,7 @@ handle_call( {prompt, [<<"add_fun">> , BinFunctions]}, _From, _State ) ->
 		  end 
 	  end, 
 	  "", 
-	  case is_list(BinFunctions) of true -> BinFunctions;
-	                               false -> [BinFunctions] end ) ,
+	  BinFunctions ) ,
 
     {reply, Reply, #state{fun_was="add_fun"}}
 
@@ -620,31 +627,6 @@ handle_call({prompt, [<<"map_doc">> , Doc]} , _From , _State) ->
 			      end
 		   end ,
  		   Fun_list ) ,
-%% {timeout,{gen_server,call,
-%%                      [<0.52.0>,
-%%                       {prompt,[<<"map_doc">>,
-%%                                {doc,<<"22332c0c775bb961d171ac8d19b2993d">>,
-%%                                     [<<"2482144364">>],
-%%                                     {[{<<"createTime">>,
-%%                                        <<"2007-04-08 12:11:01">>},
-%%                                       {<<"name">>,<<"Hospital Mean Chey">>},
-%%                                       {<<"notes">>,<<"Public Hospital">>},
-%%                                       {<<"street1">>,<<"Street 361">>},
-%%                                       {<<"city">>,<<"Phnom Penh">>},
-%%                                       {<<"postalCode">>,<<"12355">>},
-%%                                       {<<"country">>,<<"Cambodia">>},
-%%                                       {<<"telephoneNumber1">>,
-%%                                        <<"Cell: 012-937-677">>},
-%%                                       {<<"telephoneNumber2">>,
-%%                                        <<"Cell: 012-858-251">>},
-%%                                       {<<"telephoneNumber2">>,
-%%                                        <<"Cell: 012-864-684">>},
-%%                                       {<<"category">>,<<"Hospital">>},
-%%                                       {<<"creatorsName">>,<<"admin">>}]},
-%%                                     [],false,[]}]}]}}
-
-%% problem need [single_view] and [one_view, two_view] but getting
-%% [ [one_view], [two_view] ] so figure out where to add [] one time
 
     {reply, L, #state{fun_was="map_doc"}}
 .%handle_call map_doc
@@ -702,6 +684,7 @@ code_change(_OldVsn, State, _Extra) ->
 %%--------------------------------------------------------------------
 %%% Internal functions
 %%--------------------------------------------------------------------
+
 
 %% map fun
 %% fun(Doc) ->
