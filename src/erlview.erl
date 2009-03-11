@@ -145,10 +145,19 @@
 %%  7) Implement log.
 %%  8) Add search for any doc field (already finding body fields)
 %%     #doc{id=Id,deleted=Del,body=Body,revs=Revs,meta=Meta}
-%%  9) Change helper funs to accept atoms or lists 
+%%NOT 9) Change helper funs to accept atoms or lists 
 %%     ( "for fields or content with spaces" ); that is, instead of requiring
 %%     binaries in the map funs.
-%% 10)
+%%
+%%     Decided not to do this because the extra (one time) typing more than
+%%     makes up for the inefficiency of having to convert for every document.
+%%
+%% 10) Decide which design doc and db is currently being used so only those funs
+%%     get run.  See also 
+%%        ets:match(group_servers_by_name, '$1'). 
+%%        couch_view_group:request_group(list_to_pid("&lt;0.93.0&gt;"), 1).
+%%         (or whichever PIDs are listed from match)
+%%
 %% 11)
 %%
 %%
@@ -477,12 +486,12 @@ entire_doc( Doc, without, {Key, all} ) ->
     Key_not = list_to_binary(Not_key) ,
 
     Out = case lists:keysearch(Key, 1, Eb) 
-	      of {value, {_Key,_Vk}} -> 
+	      of {value, {_Key,_Vk}} -> [] ;
+	            false            ->
                                    [{ Key_not,  {[{<<"_id">>,Id}] 
 						++ [{<<"_rev">>,hd(Revs)}] 
-						++ Eb } }] ;
+						++ Eb } }]
 
-	            false          -> []
 	      end , 
 
     Out
@@ -510,7 +519,7 @@ entire_doc( Doc, without, {Key, all} ) ->
 %%@private
 %%@end
 init([]) ->
-    ets:new(?FUNTABLE, [public, named_table, ordered_set]) ,
+    ets:new(?FUNTABLE, [public, named_table, ordered_set]) , % in reset also
 
     {ok, #state{fun_was="init"}}
 . % init/1
@@ -546,6 +555,8 @@ init([]) ->
 handle_call({reset, _Data}, _From, _State) ->
     ?LOG([{reset, _Data}, _From, _State]) ,
     erlang:garbage_collect() ,
+    ets:delete(?FUNTABLE) ,
+    ets:new(?FUNTABLE, [public, named_table, ordered_set]) , % in init/1 also
     R = #response{} ,
     {reply, R#response.success, #state{fun_was="reset"}}
 ;
@@ -627,6 +638,9 @@ handle_call({prompt, [<<"map_doc">> , Doc]} , _From , _State) ->
 			      end
 		   end ,
  		   Fun_list ) ,
+
+%% why does deleting contents (AFTER the run) mess up the run ?  
+%% ets:match_delete(?FUNTABLE, '$1') , 
 
     {reply, L, #state{fun_was="map_doc"}}
 .%handle_call map_doc
