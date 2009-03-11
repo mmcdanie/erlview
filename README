@@ -20,8 +20,35 @@ I currently manually copy {erlview, couch_query_servers}.beam to
 
 4) Write reduce fun(s).
 
+5) Need to know which funs (in ets table) are in which design docs and which
+   db so I only run the ones in specific design doc to which a new fun is
+   being added (and for current db).  
 
-DONE, I put examples in the html docs.
+   So, now, need to determine, when couch_query_servers calls add_fun ...
+   * which design doc a fun is in
+   * which db is being used 
+
+
+   One storage scheme, a single ets table (as now) though with these contents
+   -record(fun, {
+		 ts="the_time_stamp_see_add_fun" , % keeps add_fun sequence 
+                 fcrypt="sha_sum_of_tokenized_map_fun" ,
+   		 db="name_of_db" , 
+   		 design_doc="name_of_design_doc" ,
+		 fun_name="name_of_map_fun" ,
+		 fun="map_fun_in_binary" } ).
+
+   Then, when couch_query_server calls add_fun, it passes the 
+   db/design_doc/fun_name and function source to view server.
+   Or, I derive that information somehow.  Then,
+
+   * parse/eval new fun
+   * add to ets table if it doesn't already exist 
+     (i.e. if db/design_doc/fcrypt exist don't add to table again)
+   * run all funs for that db/design_doc (per CDB spec)
+
+
+5 DONE, I put examples in the html docs.
 5) Write end-user docs on how to write map funs, and how to use the
    individual helper funs.  I have started writing inline docs in
    the code so during 'make', the html docs get made.
