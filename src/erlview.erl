@@ -158,6 +158,8 @@
 %%        couch_view_group:request_group(list_to_pid("&lt;0.93.0&gt;"), 1).
 %%         (or whichever PIDs are listed from match)
 %%
+%%     May require more changes to CDB to provide db and design doc information.
+%%
 %% 11)
 %%
 %%
@@ -209,8 +211,9 @@
 
 -export([start_link/0]).
 %% map fun helper funs
--export([find_all_content/2, find_any_content/2]).
--export([find_all_fields/2, find_any_fields/2, entire_doc/2, entire_doc/3]).
+-export([find_all_content/2]).
+-export([find_all_fields/2, entire_doc/2, entire_doc/3]).
+-export([helper/2]). % will replace all helpers
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -240,28 +243,118 @@ start_link() ->
 %% Helper funs, used in map funs
 %%====================================================================
 
+
 %% @doc
-%% Used in map funs, finds documents having any of the requested content, NOT IMPLEMENTED
+%% Used in map funs, intended to replace all other helpers, NOT IMPLEMENTED
+%%
 %%
 %%<pre>
-%% returns docs containing a foo of "new", or myid of "123"
-%% and returns fields myid,who,when
-%% fun(Doc) -> erlview:find_any_content(Doc,
-%%                          {[ {&lt;&lt;"foo"&gt;&gt;, &lt;&lt;"new"&gt;&gt;}, 
-%%                             {&lt;&lt;"myid"&gt;&gt;, &lt;"123"&gt;&gt;} ] 
-%%                           [ &lt;&lt;"myid"&gt;&gt;, 
-%%                             &lt;&lt;"who"&gt;&gt;, 
-%%                             &lt;&lt;"when"&gt;&gt; ] 
-%%                          } )
+%% returns all or selected fields from Doc based on Args
+%%
+%% fun(Doc) ->
+%%   erlview:helper( Doc, [ Args ] )
 %% end.
+%%
+%%
+%% Args
+%%
+%%
+%% without                        :  inverts match,  e.g. 'does not contain'
+%% {match_fields, fields() }      :  matches if document contains fields (content irrelevant)
+%% {match_content, key_pairs() }  :  matches if document contains field/contents
+%% {return, [ all | fields() ] }  :  returns all or selected fields
+%%
+%% All searches are case insensitive for both field name and contents.
+%%
+%%
+%% helper( Doc::doc(),
+%%         [ 
+%%           {match_fields, fields()} | {match_content, key_pairs()}, 
+%%           {return, all | fields()}
+%%         ] ) -> doc()
+%%
+%%
+%% examples:
+%%
+%% 1) if Doc has a city field with contents of Panama return listed fields
+%%  fun(Doc) ->
+%%   erlview:helper(Doc,
+%%                  [ {match_content [&lt;&lt;"city"&gt;&gt;,&lt;&lt;"Panama"&gt;&gt;]},
+%%                    {return,
+%%                     [ &lt;&lt;"category"&gt;&gt;,
+%%                       &lt;&lt;"website"&gt;&gt;,
+%%                       &lt;&lt;"city"&gt;&gt;,
+%%                       &lt;&lt;"country"&gt;&gt;,
+%%                       &lt;&lt;"create_ts"&gt;&gt;,
+%%                       &lt;&lt;"name"&gt;&gt;,
+%%                       &lt;&lt;"postal_code"&gt;&gt;,
+%%                       &lt;&lt;"street_one"&gt;&gt;,
+%%                       &lt;&lt;"phone_one"&gt;&gt; ] }
+%%                   ] )
+%%  end.
+%%
+%%
+%% 2) if Doc does not have a state field with contents of OR then return all fields
+%%  fun(Doc) ->
+%%   erlview:helper(Doc,
+%%                  [ without,
+%%                    {match_content [&lt;&lt;"state"&gt;&gt;,&lt;&lt;"OR"&gt;&gt;]},
+%%                    {return, all}
+%%                  ] )
+%%  end.
+%%
+%%
+%% 3) if Doc does not have a city field then return creator_name and create_ts
+%%  fun(Doc) ->
+%%   erlview:helper(Doc,
+%%                  [ without,
+%%                    {match_fields [&lt;&lt;"city"&gt;&gt;]},
+%%                    {return, [&lt;&lt;"create_name"&gt;&gt;,&lt;&lt;"create_ts"&gt;&gt;,]}
+%%                  ] )
+%%  end.
+%%
+%%
 %%</pre>
 %%
-%% find_any_content( Doc::doc(), { Key_pairs::key_pairs() ,
-%%                            Out_fields::fields() } ) -> doc()
+%% @spec helper( Doc::doc(), Args ) -> doc()
 %% @end
-find_any_content( _Doc, {_Key_pairs, _Out_fields} ) -> 
+helper( Doc, Args ) -> 
+    #doc{id=_Id,deleted=_Del,body=_Body,revs=_Revs,meta=_Meta} = Doc ,
+
+    MF = fun(X) -> case is_tuple(X) of true -> match_fields == element(1,X); 
+		                    false   -> false
+		   end
+	 end ,
+
+    MC = fun(X) -> case is_tuple(X) of true -> match_content == element(1,X); 
+		                    false   -> false
+                   end
+         end ,
+
+    MF_bool = is_true( lists:map( fun(X) -> MF(X) end, Args ) ) ,
+    MC_bool = is_true( lists:map( fun(X) -> MC(X) end, Args ) ) ,
+    WO_bool = lists:member( without, Args ) ,
+
+    Match_fields = {x,1} ,
+    Match_content= {y,2} ,
+    Out_fields   = {z,3} ,
+
+    case (true == MF_bool) and (false == WO_bool)
+        of true  -> find_all_content(Doc, {element(2, Match_fields),
+                                           Out_fields}) ;
+        false -> something_else
+    end ,
+
+    case (true == MC_bool) and (false == WO_bool)
+        of true  -> find_all_fields(Doc, {element(2, Match_content),
+                                          Out_fields}) ;
+        false -> something_else
+    end ,
+
     {error, not_implemented}
 .
+
+
 
 
 
@@ -332,26 +425,6 @@ find_all_content( Doc, {Key_pairs, Out_fields} ) ->  % all must match
 
 
 
-
-
-%% @doc
-%% Used in map funs, finds documents having any of the requested fields, NOT IMPLEMENTED
-%%
-%%<pre>
-%% fun(Doc) -> erlview:find_any_fields( Doc, { &lt;&lt;"who"&gt;&gt;, 
-%%                                       [&lt;&lt;"who"&gt;&gt;,
-%%                                        &lt;&lt;"what"&gt;&gt;,
-%%                                        &lt;&lt;"when"&gt;&gt;] } )
-%% end.
-%%</pre>
-%%
-%% If any Keys are found in Doc, returns fields requested via Out_fields argument.
-%%
-%% @spec find_any_fields( Doc::doc(), { Keys::fields(), [Out_fields::fields()] } ) -> doc()
-%% @end
-find_any_fields( _Doc, {_Keys, _Out_fields} ) ->
-  {error, not_implemented}
-.
 
 
 
@@ -541,15 +614,6 @@ init([]) ->
 %% ;
 
 
-%% [ H | T ] = Data in  couch_os_process:prompt(Pid, Data)
-%%                       (called from couch_query_servers)
-%% 
-%% [ H | T ] = [<<"add_fun">>,<<"function(doc) {\n  emit(null, doc);\n}">>]
-%% H = <<"add_fun">> ,
-%% T = <<"function(doc) {\n  emit(null, doc);\n}">> ,
-%%@doc
-%%@private
-%%@end
 
 
 handle_call({reset, _Data}, _From, _State) ->
@@ -573,9 +637,13 @@ handle_call( {prompt, [<<"add_fun">> , BinFunc]}, _From, _State ) ->
 
 						% BinFunctions are funs CDB knows
 						% about, clear out the old one
+%% no can do e.g. add a fun run add another and failure 'cuz CDB doesn't send
+%% all of the funs, i'm expected to know about them ; but how the hell does
+%% it work in the javascript to keep them separate between design docs? i don't
+%% see where they *ever* delete funs or how they keep them straight
 %%     handle_call({reset, reset}, self(), #state{fun_was="add_fun"}) ,
 
- BinFunctions = case is_list(BinFunc) of true -> BinFunc; _ -> [BinFunc] end ,
+    BinFunctions = case is_list(BinFunc) of true -> BinFunc; _ -> [BinFunc] end ,
 
     R = #response{} ,
     Reply =
@@ -641,6 +709,11 @@ handle_call({prompt, [<<"map_doc">> , Doc]} , _From , _State) ->
 
 %% why does deleting contents (AFTER the run) mess up the run ?  
 %% ets:match_delete(?FUNTABLE, '$1') , 
+%% oh, duh! because it happens after the FIRST doc is processed ! if it 
+%% happened after the LAST doc then no prob. ; too bad a reset isn't sent
+%% from CDB after the last doc ; but didn't I clear before add_fun once ?
+%% should try that again except I don't think can depend on all funs
+%% getting passed at once to add_fun
 
     {reply, L, #state{fun_was="map_doc"}}
 .%handle_call map_doc
