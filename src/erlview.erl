@@ -200,6 +200,7 @@
 -author('Michael McDaniel dba Automated Systems, http://autosys.us').
 -copyright('2009 Michael McDaniel dba Automated Systems, http://autosys.us').
 -license('Apache 2.0, see the documentation').
+-version(" version $Id$").
 
 -define(SERVER, ?MODULE).
 -define(FUNTABLE, cdb_table).
@@ -214,6 +215,7 @@
 -export([find_all_content/2]).
 -export([find_all_fields/2, entire_doc/2, entire_doc/3]).
 -export([helper/2]). % will replace all helpers
+-export([version/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -227,6 +229,9 @@
 %%====================================================================
 %% API
 %%====================================================================
+
+version() -> io:fwrite("~p~n", [?VERSION]).
+
 %%--------------------------------------------------------------------
 %% Function: start_link() -> {ok,Pid} | ignore | {error,Error}
 %% Description: Starts the server
@@ -318,41 +323,54 @@ start_link() ->
 %%
 %% @spec helper( Doc::doc(), Args ) -> doc()
 %% @end
-helper( Doc, Args ) -> 
-    #doc{id=_Id,deleted=_Del,body=_Body,revs=_Revs,meta=_Meta} = Doc ,
-
-    MF = fun(X) -> case is_tuple(X) of true -> match_fields == element(1,X); 
-		                    false   -> false
-		   end
-	 end ,
-
-    MC = fun(X) -> case is_tuple(X) of true -> match_content == element(1,X); 
-		                    false   -> false
-                   end
-         end ,
-
-    MF_bool = is_true( lists:map( fun(X) -> MF(X) end, Args ) ) ,
-    MC_bool = is_true( lists:map( fun(X) -> MC(X) end, Args ) ) ,
-    WO_bool = lists:member( without, Args ) ,
-
-    Match_fields = {x,1} ,
-    Match_content= {y,2} ,
-    Out_fields   = {z,3} ,
-
-    case (true == MF_bool) and (false == WO_bool)
-        of true  -> find_all_content(Doc, {element(2, Match_fields),
-                                           Out_fields}) ;
-        false -> something_else
-    end ,
-
-    case (true == MC_bool) and (false == WO_bool)
-        of true  -> find_all_fields(Doc, {element(2, Match_content),
-                                          Out_fields}) ;
-        false -> something_else
-    end ,
-
-    {error, not_implemented}
+helper( fac, Doc, Args ) -> 
+    find_all_content( Doc, Args )
+;
+helper( faf, Doc, Args ) ->
+    find_all_fields( Doc, Args )
+;
+helper( ed, Doc, Args ) ->
+    entire_doc( Doc, Args )
+;
+helper( edw, Doc, Args ) ->
+    entire_doc( Doc, without, Args )
 .
+
+
+%%     #doc{id=_Id,deleted=_Del,body=_Body,revs=_Revs,meta=_Meta} = Doc ,
+
+%%     MF = fun(X) -> case is_tuple(X) of true -> match_fields == element(1,X); 
+%% 		                    false   -> false
+%% 		   end
+%% 	 end ,
+
+%%     MC = fun(X) -> case is_tuple(X) of true -> match_content == element(1,X); 
+%% 		                    false   -> false
+%%                    end
+%%          end ,
+
+%%     MF_bool = is_true( lists:map( fun(X) -> MF(X) end, Args ) ) ,
+%%     MC_bool = is_true( lists:map( fun(X) -> MC(X) end, Args ) ) ,
+%%     WO_bool = lists:member( without, Args ) ,
+
+%%     Match_fields = {x,1} ,
+%%     Match_content= {y,2} ,
+%%     Out_fields   = {z,3} ,
+
+%%     case (true == MF_bool) and (false == WO_bool)
+%%         of true  -> find_all_content(Doc, {element(2, Match_fields),
+%%                                            Out_fields}) ;
+%%         false -> something_else
+%%     end ,
+
+%%     case (true == MC_bool) and (false == WO_bool)
+%%         of true  -> find_all_fields(Doc, {element(2, Match_content),
+%%                                           Out_fields}) ;
+%%         false -> something_else
+%%     end ,
+
+%%     {error, not_implemented}
+%% .
 
 
 

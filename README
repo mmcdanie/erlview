@@ -48,15 +48,15 @@ I currently manually copy {erlview, couch_query_servers}.beam to
    * run all funs for that db/design_doc (per CDB spec)
 
 
-5 DONE, I put examples in the html docs.
-5) Write end-user docs on how to write map funs, and how to use the
+6 DONE, I put examples in the html docs.
+6) Write end-user docs on how to write map funs, and how to use the
    individual helper funs.  I have started writing inline docs in
    the code so during 'make', the html docs get made.
 
 
-6) Makefile could use some improving (e.g. doc target instead of just making it)
+7) Makefile could use some improving (e.g. doc target instead of just making it)
 
-7) Maybe modify couch_query_servers.erl so that map_docs/2 sent a list of
+8) Maybe modify couch_query_servers.erl so that map_docs/2 sent a list of
    docs rather than a single doc.  That way, handle_call( {map_doc ... )
    in erlview could run parallel funs.  
 
@@ -80,6 +80,8 @@ KNOWN BUGS:
 
    The above is in reference, of course, to multiple map funs in a single
    design document.
+
+   Related to 5 in TODO above.
 
 3) Helper funs have not been thoroughly tested.  They seem to work correctly
    for each goal, just not stringently tested against known output.  I 
