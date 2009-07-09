@@ -214,7 +214,7 @@
 %% map fun helper funs
 -export([find_all_content/2]).
 -export([find_all_fields/2, entire_doc/2, entire_doc/3]).
--export([helper/2]). % will replace all helpers
+-export([helper/3]).
 -export([version/0]).
 
 %% gen_server callbacks
@@ -230,6 +230,7 @@
 %% API
 %%====================================================================
 
+-define(VERSION, "unknown").
 version() -> io:fwrite("~p~n", [?VERSION]).
 
 %%--------------------------------------------------------------------
