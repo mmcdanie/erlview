@@ -12,7 +12,8 @@
 {'*', [
 	{outdir, "../ebin"}
        ,{i, "../include"}
-       ,{i, "../../couchdb.tmp/src/couchdb"}
+% change to your couchdb path
+       ,{i, "../../couchdb/src/couchdb"}
        ,{i, "../test"}
        ,debug_info
        ,strict_record_tests
